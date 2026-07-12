@@ -149,7 +149,7 @@ python backend/app.py
 
 ## Author
 
-**Sruthi**
+**Sruthi B**
 
 Bachelor of Engineering (Electronics and Communication Engineering)
 
