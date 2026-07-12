@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Profile — SkillPath AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root { --primary:#7C3AED; --secondary:#3B82F6; --accent:#F97316; --green:#10B981; --border:rgba(255,255,255,0.08); --muted:#94A3B8; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+        body { min-height:100vh; background: radial-gradient(circle at top left,rgba(124,58,237,0.2),transparent 35%), radial-gradient(circle at bottom right,rgba(59,130,246,0.15),transparent 35%), linear-gradient(135deg,#0B0A1A,#13112A,#1C1A3A); color:#fff; padding:30px 20px 60px; }
+        .blob{position:fixed;border-radius:50%;filter:blur(120px);opacity:0.15;z-index:-1;}
+        .blob-1{width:400px;height:400px;background:#7C3AED;top:-150px;left:-150px;}
+        .blob-2{width:400px;height:400px;background:#3B82F6;bottom:-150px;right:-150px;}
+        .top-nav{display:flex;justify-content:space-between;align-items:center;max-width:900px;margin:0 auto 28px;}
+        .logo{font-size:1.3rem;font-weight:700;display:flex;align-items:center;gap:8px;}
+        .brain{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;}
+        .progress-steps{display:flex;align-items:center;justify-content:center;max-width:500px;margin:0 auto 36px;}
+        .ps-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
+        .ps-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.1);color:var(--muted);}
+        .ps-circle.done{background:var(--green);border-color:var(--green);color:#fff;}
+        .ps-circle.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+        .ps-label{font-size:0.68rem;color:var(--muted);}
+        .ps-label.active{color:#fff;}
+        .ps-line{flex:1;height:2px;background:rgba(255,255,255,0.08);margin-top:-22px;}
+        .ps-line.done{background:var(--green);}
+        .layout{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 2fr;gap:24px;}
+        @media(max-width:768px){.layout{grid-template-columns:1fr;}}
+        .left-panel{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:20px;padding:28px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;height:fit-content;}
+        .avatar{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:700;}
+        .disp-name{font-size:1.1rem;font-weight:700;}
+        .disp-email{font-size:0.78rem;color:var(--muted);}
+        .disp-college{font-size:0.8rem;color:var(--muted);background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:20px;padding:5px 14px;}
+        .pc-wrap{width:100%;}
+        .pc-top{display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:6px;color:var(--muted);}
+        .pc-top span:last-child{color:var(--green);font-weight:600;}
+        .pc-track{height:6px;border-radius:6px;background:rgba(255,255,255,0.08);overflow:hidden;}
+        .pc-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--primary),var(--green));transition:width 0.5s;}
+        .qs-row{width:100%;display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;padding:8px 12px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;}
+        .qs-label{color:var(--muted);}
+        .qs-val{font-weight:600;color:var(--accent);}
+        .form-panel{display:flex;flex-direction:column;gap:20px;}
+        .fsec{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:20px;padding:24px;}
+        .fsec h4{font-size:0.95rem;font-weight:600;margin-bottom:18px;display:flex;align-items:center;gap:10px;}
+        .sec-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.9rem;}
+        .si-purple{background:rgba(124,58,237,0.2);color:#A78BFA;}
+        .si-blue{background:rgba(59,130,246,0.2);color:#60A5FA;}
+        .si-green{background:rgba(16,185,129,0.2);color:#34D399;}
+        .si-orange{background:rgba(249,115,22,0.2);color:#FB923C;}
+        .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+        @media(max-width:580px){.field-row{grid-template-columns:1fr;}}
+        .fg{margin-bottom:0;}
+        .fg label{display:block;font-size:0.78rem;font-weight:600;color:var(--muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:0.04em;}
+        .fg label .req{color:var(--accent);}
+        .fg input,.fg select,.fg textarea{width:100%;padding:12px 14px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.88rem;transition:border-color 0.2s;}
+        .fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--primary);background:rgba(124,58,237,0.08);}
+        .fg input::placeholder,.fg textarea::placeholder{color:#3D4A5E;}
+        .fg select option{background:#1C1A3A;}
+        .skill-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+        .stag{padding:7px 14px;border-radius:20px;font-size:0.8rem;font-weight:500;cursor:pointer;user-select:none;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--muted);transition:all 0.15s;}
+        .stag:hover{border-color:var(--primary);color:#fff;}
+        .stag.sel{background:rgba(124,58,237,0.25);border-color:var(--primary);color:#C4B5FD;font-weight:600;}
+        .course-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+        @media(max-width:580px){.course-grid{grid-template-columns:1fr;}}
+        .ccard{padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;cursor:pointer;transition:all 0.15s;}
+        .ccard:hover{border-color:var(--secondary);}
+        .ccard.sel{background:rgba(59,130,246,0.12);border-color:var(--secondary);}
+        .cc-title{font-size:0.82rem;font-weight:600;margin-bottom:3px;}
+        .cc-meta{font-size:0.72rem;color:var(--muted);}
+        .cc-tag{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:20px;font-size:0.68rem;font-weight:700;}
+        .tag-free{background:rgba(16,185,129,0.2);color:#34D399;}
+        .tag-cert{background:rgba(249,115,22,0.2);color:#FB923C;}
+        .tag-nsqf{background:rgba(124,58,237,0.2);color:#A78BFA;}
+        .alert-box{display:none;padding:12px 16px;border-radius:10px;font-size:0.85rem;margin-bottom:4px;}
+        .alert-error{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#F87171;}
+        .alert-success{background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:#6EE7B7;}
+        .btn-save{width:100%;padding:15px;background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;border-radius:12px;color:#fff;font-family:'Poppins',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;}
+        .btn-save:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(124,58,237,0.4);}
+        .btn-save:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+    </style>
+</head>
+<body>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<div class="top-nav">
+    <div class="logo"><div class="brain"><i class="fa-solid fa-brain"></i></div> SkillPath <span style="color:#9F67FF;">AI</span></div>
+    <div style="font-size:0.82rem;color:var(--muted);">Step <span style="color:var(--accent);font-weight:600;">2</span> of 4 — Build Your Profile</div>
+</div>
+
+<div class="progress-steps">
+    <div class="ps-item"><div class="ps-circle done"><i class="fa-solid fa-check"></i></div><div class="ps-label">Account</div></div>
+    <div class="ps-line done"></div>
+    <div class="ps-item"><div class="ps-circle active">2</div><div class="ps-label active">Profile</div></div>
+    <div class="ps-line"></div>
+    <div class="ps-item"><div class="ps-circle">3</div><div class="ps-label">Assessment</div></div>
+    <div class="ps-line"></div>
+    <div class="ps-item"><div class="ps-circle">4</div><div class="ps-label">Dashboard</div></div>
+</div>
+
+<div class="layout">
+    <div class="left-panel">
+        <div class="avatar" id="avatarEl">?</div>
+        <div class="disp-name"  id="dispName">Your Name</div>
+        <div class="disp-email" id="dispEmail">your@email.com</div>
+        <div class="disp-college" id="dispCollege">College Name</div>
+        <div class="pc-wrap">
+            <div class="pc-top"><span>Profile Completion</span><span id="pcPct">0%</span></div>
+            <div class="pc-track"><div class="pc-fill" id="pcFill" style="width:0%;"></div></div>
+        </div>
+        <div class="qs-row"><span class="qs-label">Skills Selected</span><span class="qs-val" id="qsSkills">0</span></div>
+        <div class="qs-row"><span class="qs-label">Courses Chosen</span><span class="qs-val" id="qsCourses">0</span></div>
+        <div class="qs-row"><span class="qs-label">Career Goal</span><span class="qs-val" id="qsGoal">—</span></div>
+    </div>
+
+    <div class="form-panel">
+        <div class="alert-box alert-error"   id="errorBox"></div>
+        <div class="alert-box alert-success" id="successBox"></div>
+
+        <form id="profileForm">
+            <div class="fsec">
+                <h4><div class="sec-icon si-purple"><i class="fa-solid fa-user"></i></div> Personal Information</h4>
+                <div class="field-row" style="margin-bottom:14px;">
+                    <div class="fg"><label>Full Name <span class="req">*</span></label><input type="text" id="name" placeholder="e.g. Sruthi B" required oninput="preview()"></div>
+                    <div class="fg"><label>Email ID <span class="req">*</span></label><input type="email" id="email" placeholder="your@email.com" required oninput="preview()"></div>
+                </div>
+                <div class="field-row">
+                    <div class="fg"><label>College / University <span class="req">*</span></label><input type="text" id="college" placeholder="e.g. Anna University" required oninput="preview()"></div>
+                    <div class="fg"><label>Department <span class="req">*</span></label><input type="text" id="department" placeholder="e.g. CSE, IT, ECE" required></div>
+                </div>
+            </div>
+
+            <div class="fsec">
+                <h4><div class="sec-icon si-blue"><i class="fa-solid fa-graduation-cap"></i></div> Academic Background</h4>
+                <div class="field-row" style="margin-bottom:14px;">
+                    <div class="fg"><label>Education Level <span class="req">*</span></label>
+                        <select id="education" required>
+                            <option value="">— Select —</option>
+                            <option>High School (10th)</option>
+                            <option>Higher Secondary (12th)</option>
+                            <option>Diploma</option>
+                            <option>B.E / B.Tech</option>
+                            <option>B.Sc / BCA / B.Com</option>
+                            <option>M.E / M.Tech</option>
+                            <option>MBA / MCA</option>
+                        </select>
+                    </div>
+                    <div class="fg"><label>Preferred Language</label>
+                        <select id="language">
+                            <option>English</option><option>Tamil</option><option>Hindi</option><option>Telugu</option><option>Kannada</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="fg"><label>Your Interests / Hobbies</label><textarea id="interests" rows="2" placeholder="e.g. Building apps, solving coding challenges, reading tech articles..."></textarea></div>
+            </div>
+
+            <div class="fsec">
+                <h4><div class="sec-icon si-green"><i class="fa-solid fa-code"></i></div> Current Skills — tap to select</h4>
+                <div class="skill-grid">
+                    <span class="stag" onclick="toggleSkill(this)">Python</span>
+                    <span class="stag" onclick="toggleSkill(this)">Java</span>
+                    <span class="stag" onclick="toggleSkill(this)">JavaScript</span>
+                    <span class="stag" onclick="toggleSkill(this)">HTML / CSS</span>
+                    <span class="stag" onclick="toggleSkill(this)">SQL</span>
+                    <span class="stag" onclick="toggleSkill(this)">C / C++</span>
+                    <span class="stag" onclick="toggleSkill(this)">React</span>
+                    <span class="stag" onclick="toggleSkill(this)">Node.js</span>
+                    <span class="stag" onclick="toggleSkill(this)">Machine Learning</span>
+                    <span class="stag" onclick="toggleSkill(this)">Data Analysis</span>
+                    <span class="stag" onclick="toggleSkill(this)">Git</span>
+                    <span class="stag" onclick="toggleSkill(this)">Excel</span>
+                    <span class="stag" onclick="toggleSkill(this)">Power BI</span>
+                    <span class="stag" onclick="toggleSkill(this)">Figma / UI Design</span>
+                    <span class="stag" onclick="toggleSkill(this)">Communication</span>
+                    <span class="stag" onclick="toggleSkill(this)">Problem Solving</span>
+                    <span class="stag" onclick="toggleSkill(this)">Cloud Basics</span>
+                    <span class="stag" onclick="toggleSkill(this)">Cybersecurity Basics</span>
+                </div>
+            </div>
+
+            <div class="fsec">
+                <h4><div class="sec-icon si-orange"><i class="fa-solid fa-bullseye"></i></div> Career Goal & Learning Preferences</h4>
+                <div class="field-row" style="margin-bottom:16px;">
+                    <div class="fg"><label>Target Career Goal <span class="req">*</span></label>
+                        <select id="careerGoal" required onchange="preview()">
+                            <option value="">— Select your goal —</option>
+                            <option>Backend Developer</option><option>Frontend Developer</option>
+                            <option>Full Stack Developer</option><option>Data Analyst</option>
+                            <option>Data Scientist</option><option>AI / ML Engineer</option>
+                            <option>Mobile App Developer</option><option>Cloud Engineer</option>
+                            <option>Cybersecurity Analyst</option><option>UI/UX Designer</option>
+                        </select>
+                    </div>
+                    <div class="fg"><label>What do you want to learn?</label><input type="text" id="wantToLearn" placeholder="e.g. Build real-world projects..."></div>
+                </div>
+                <label style="font-size:0.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:10px;">Suggested Courses — pick what interests you</label>
+                <div class="course-grid">
+                    <div class="ccard" onclick="toggleCourse(this)" data-course="Python for Beginners"><div class="cc-title">Python for Beginners</div><div class="cc-meta">freeCodeCamp · 4 weeks</div><span class="cc-tag tag-free">Free</span></div>
+                    <div class="ccard" onclick="toggleCourse(this)" data-course="Web Development Bootcamp"><div class="cc-title">Web Development Bootcamp</div><div class="cc-meta">The Odin Project · 8 weeks</div><span class="cc-tag tag-free">Free</span></div>
+                    <div class="ccard" onclick="toggleCourse(this)" data-course="Machine Learning by Andrew Ng"><div class="cc-title">Machine Learning</div><div class="cc-meta">Andrew Ng · Coursera · 8 weeks</div><span class="cc-tag tag-cert">Certificate</span></div>
+                    <div class="ccard" onclick="toggleCourse(this)" data-course="Data Analysis with Python"><div class="cc-title">Data Analysis with Python</div><div class="cc-meta">IBM · Coursera · 5 weeks</div><span class="cc-tag tag-cert">Certificate</span></div>
+                    <div class="ccard" onclick="toggleCourse(this)" data-course="Full Stack Development NSQF"><div class="cc-title">Full Stack Development</div><div class="cc-meta">Skill India · NSQF Level 5</div><span class="cc-tag tag-nsqf">NSQF</span></div>
+                    <div class="ccard" onclick="toggleCourse(this)" data-course="Cloud Computing Fundamentals"><div class="cc-title">Cloud Computing</div><div class="cc-meta">Google Cloud · 3 weeks</div><span class="cc-tag tag-free">Free</span></div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-save" id="saveBtn">
+                <i class="fa-solid fa-arrow-right me-2"></i> Save Profile & Go to Dashboard
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+const API_BASE = "http://127.0.0.1:5000";
+const stored = localStorage.getItem("currentUser");
+if (!stored) { window.location.href = "login.html"; }
+const currentUser = JSON.parse(stored || "{}");
+
+if (currentUser.name)  document.getElementById("name").value  = currentUser.name;
+if (currentUser.email) document.getElementById("email").value = currentUser.email;
+preview();
+
+function preview() {
+    const name    = document.getElementById("name").value.trim();
+    const email   = document.getElementById("email").value.trim();
+    const college = document.getElementById("college").value.trim();
+    const goal    = document.getElementById("careerGoal").value;
+    document.getElementById("avatarEl").textContent   = name ? name.charAt(0).toUpperCase() : "?";
+    document.getElementById("dispName").textContent   = name    || "Your Name";
+    document.getElementById("dispEmail").textContent  = email   || "your@email.com";
+    document.getElementById("dispCollege").textContent= college || "College Name";
+    document.getElementById("qsGoal").textContent     = goal    || "—";
+    const filled = [name,email,college,goal].filter(f=>f).length;
+    const skills = document.querySelectorAll(".stag.sel").length;
+    const pct    = Math.round(((filled + (skills>0?1:0)) / 5) * 100);
+    document.getElementById("pcPct").textContent  = pct + "%";
+    document.getElementById("pcFill").style.width = pct + "%";
+}
+
+function toggleSkill(el) {
+    el.classList.toggle("sel");
+    document.getElementById("qsSkills").textContent = document.querySelectorAll(".stag.sel").length;
+    preview();
+}
+
+function toggleCourse(el) {
+    el.classList.toggle("sel");
+    document.getElementById("qsCourses").textContent = document.querySelectorAll(".ccard.sel").length;
+}
+
+function showError(msg)   { const b=document.getElementById("errorBox");   b.textContent=msg; b.style.display="block"; document.getElementById("successBox").style.display="none"; window.scrollTo({top:0,behavior:"smooth"}); }
+function showSuccess(msg) { const b=document.getElementById("successBox"); b.textContent=msg; b.style.display="block"; document.getElementById("errorBox").style.display="none"; }
+
+document.getElementById("profileForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const name       = document.getElementById("name").value.trim();
+    const email      = document.getElementById("email").value.trim();
+    const college    = document.getElementById("college").value.trim();
+    const department = document.getElementById("department").value.trim();
+    const education  = document.getElementById("education").value;
+    const language   = document.getElementById("language").value;
+    const interests  = document.getElementById("interests").value.trim();
+    const careerGoal = document.getElementById("careerGoal").value;
+    const wantToLearn= document.getElementById("wantToLearn").value.trim();
+    const skills     = Array.from(document.querySelectorAll(".stag.sel")).map(el=>el.textContent.trim());
+    const courses    = Array.from(document.querySelectorAll(".ccard.sel")).map(el=>el.getAttribute("data-course"));
+    const btn        = document.getElementById("saveBtn");
+
+    if (!name||!email||!college||!department||!education||!careerGoal) { showError("Please fill in all required fields marked with *"); return; }
+    if (skills.length === 0) { showError("Please select at least one skill."); return; }
+
+    btn.disabled   = true;
+    btn.innerHTML  = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Saving...';
+
+    // Save selected skills to localStorage for assessment page
+    localStorage.setItem("profileSkills", JSON.stringify(skills));
+
+    try {
+        const res = await fetch(API_BASE + "/profile", {
+            method:"POST", headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({ user_id:currentUser.id, name, email, college, department, education, language, interests, career_goal:careerGoal, want_to_learn:wantToLearn, skills, courses })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            currentUser.name = name; currentUser.has_profile = true;
+            localStorage.setItem("currentUser", JSON.stringify(currentUser));
+            showSuccess("Profile saved! Taking you to dashboard...");
+            // ✅ Goes to DASHBOARD not assessment
+            setTimeout(() => { window.location.href = "dashboard.html"; }, 1500);
+        } else {
+            showError(data.message || "Failed to save. Try again.");
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fa-solid fa-arrow-right me-2"></i> Save Profile & Go to Dashboard';
+        }
+    } catch(err) {
+        // Even if backend fails, save locally and go to dashboard
+        currentUser.name = name; currentUser.has_profile = true;
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
+        showSuccess("Profile saved locally! Going to dashboard...");
+        setTimeout(() => { window.location.href = "dashboard.html"; }, 1500);
+    }
+});
+</script>
+</body>
+</html>

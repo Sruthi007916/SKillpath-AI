@@ -1,0 +1,149 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    min-height:100vh;
+
+    background:
+        radial-gradient(circle at top left, rgba(124,58,237,.25), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(6,182,212,.25), transparent 30%),
+        linear-gradient(135deg,#020617,#0f172a,#111827);
+
+    color:#fff;
+}
+
+.auth-container{
+    min-height:100vh;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+}
+
+.auth-left{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:80px;
+}
+
+.brand{
+    color:#06b6d4;
+    text-decoration:none;
+    font-size:2rem;
+    font-weight:700;
+    margin-bottom:40px;
+}
+
+.auth-left h1{
+    font-size:3.5rem;
+    font-weight:800;
+    margin-bottom:20px;
+}
+
+.auth-left p{
+    color:#cbd5e1;
+    font-size:1.1rem;
+    max-width:500px;
+}
+
+.auth-right{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px;
+}
+
+.auth-card{
+    width:100%;
+    max-width:450px;
+
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.1);
+
+    backdrop-filter:blur(20px);
+
+    border-radius:30px;
+    padding:40px;
+}
+
+.auth-card h2{
+    text-align:center;
+    margin-bottom:30px;
+    font-weight:700;
+}
+
+.input-group-custom{
+    display:flex;
+    align-items:center;
+
+    background:rgba(255,255,255,0.06);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    border-radius:15px;
+
+    padding:15px 20px;
+
+    margin-bottom:20px;
+}
+
+.input-group-custom i{
+    color:#06b6d4;
+    margin-right:15px;
+}
+
+.input-group-custom input{
+    width:100%;
+    background:none;
+    border:none;
+    outline:none;
+    color:#fff;
+}
+
+.input-group-custom input::placeholder{
+    color:#94a3b8;
+}
+
+.auth-btn{
+    width:100%;
+    padding:15px;
+
+    border:none;
+    border-radius:15px;
+
+    background:linear-gradient(135deg,#7c3aed,#06b6d4);
+
+    color:#fff;
+    font-weight:600;
+
+    margin-top:10px;
+}
+
+.bottom-text{
+    text-align:center;
+    margin-top:25px;
+    color:#cbd5e1;
+}
+
+.bottom-text a{
+    color:#06b6d4;
+    text-decoration:none;
+}
+
+@media(max-width:768px){
+
+    .auth-container{
+        grid-template-columns:1fr;
+    }
+
+    .auth-left{
+        display:none;
+    }
+
+    .auth-card{
+        max-width:100%;
+    }
+}

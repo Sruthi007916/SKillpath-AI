@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment — SkillPath AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root{--primary:#7C3AED;--secondary:#3B82F6;--accent:#F97316;--green:#10B981;--bg:#0B0A1A;--bg3:#1C1A3A;--border:rgba(255,255,255,0.08);--muted:#94A3B8;}
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+        body{min-height:100vh;background:radial-gradient(circle at top left,rgba(124,58,237,0.2),transparent 35%),radial-gradient(circle at bottom right,rgba(59,130,246,0.15),transparent 35%),linear-gradient(135deg,#0B0A1A,#13112A,#1C1A3A);color:#fff;padding:30px 20px 60px;}
+        .blob{position:fixed;border-radius:50%;filter:blur(120px);opacity:0.15;z-index:-1;}
+        .blob-1{width:400px;height:400px;background:#7C3AED;top:-150px;left:-150px;}
+        .blob-2{width:400px;height:400px;background:#3B82F6;bottom:-150px;right:-150px;}
+        .top-nav{display:flex;justify-content:space-between;align-items:center;max-width:900px;margin:0 auto 24px;}
+        .logo{font-size:1.3rem;font-weight:700;display:flex;align-items:center;gap:8px;}
+        .brain{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;}
+        .wrap{max-width:900px;margin:0 auto;}
+
+        .section-tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:28px;}
+        .stab{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;transition:all 0.2s;}
+        .stab .stab-icon{font-size:1.4rem;margin-bottom:6px;}
+        .stab .stab-name{font-size:0.75rem;font-weight:600;color:var(--muted);}
+        .stab .stab-status{font-size:0.65rem;margin-top:4px;color:var(--muted);}
+        .stab.active{background:linear-gradient(135deg,rgba(124,58,237,0.3),rgba(59,130,246,0.2));border-color:var(--primary);}
+        .stab.active .stab-name{color:#fff;}
+        .stab.done{border-color:var(--green);}
+        .stab.done .stab-icon::after{content:'✓';font-size:0.7rem;background:var(--green);border-radius:50%;padding:1px 4px;margin-left:4px;}
+        @media(max-width:600px){.section-tabs{grid-template-columns:repeat(3,1fr);}}
+
+        .attempt-banner{background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.3);border-radius:14px;padding:16px 20px;display:flex;align-items:flex-start;gap:12px;margin-bottom:20px;}
+        .locked-box{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:20px;padding:48px;text-align:center;display:none;}
+        .btn-dash{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;border-radius:12px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;text-decoration:none;}
+
+        .section-page{display:none;}
+        .section-page.active{display:block;}
+        .scard{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:20px;padding:28px;margin-bottom:20px;}
+        .scard-header{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
+        .scard-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
+        .scard-title{font-size:1.05rem;font-weight:700;}
+        .scard-desc{font-size:0.82rem;color:var(--muted);margin-bottom:20px;}
+
+        .ap-row{display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;}
+        .ap-track{height:8px;border-radius:6px;background:rgba(255,255,255,0.08);overflow:hidden;margin-bottom:20px;}
+        .ap-fill{height:100%;border-radius:6px;transition:width 0.4s;}
+
+        .qcard{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;}
+        .qbadge{display:inline-block;font-size:0.68rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:8px;}
+        .qnum{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent);margin-bottom:6px;}
+        .qtext{font-size:0.92rem;font-weight:500;margin-bottom:14px;line-height:1.6;}
+        .qtext pre{background:rgba(0,0,0,0.35);padding:12px;border-radius:8px;font-size:0.82rem;color:#C4B5FD;margin:8px 0;overflow-x:auto;}
+        .opts{display:flex;flex-direction:column;gap:8px;}
+        .opt{display:flex;align-items:center;gap:12px;padding:11px 16px;border:1.5px solid rgba(255,255,255,0.08);border-radius:10px;cursor:pointer;transition:all 0.15s;font-size:0.88rem;}
+        .opt:hover{border-color:var(--primary);background:rgba(124,58,237,0.08);}
+        .opt.sel{border-color:var(--primary);background:rgba(124,58,237,0.15);color:#C4B5FD;}
+        .oc{width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.7rem;}
+        .opt.sel .oc{background:var(--primary);border-color:var(--primary);}
+
+        .ctask{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px;}
+        .ctask-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+        .tnum{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;flex-shrink:0;}
+        .ttitle{font-size:0.88rem;font-weight:600;}
+        .tsub{font-size:0.72rem;color:var(--muted);}
+        .rtext{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:0.88rem;line-height:1.8;color:#C5C2DD;margin-bottom:12px;}
+        .topic-box{background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(59,130,246,0.1));border:1px solid rgba(124,58,237,0.3);border-radius:12px;padding:18px;text-align:center;margin-bottom:12px;}
+        .ttopic{font-size:1rem;font-weight:700;color:#C4B5FD;}
+        .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+        .mic-btn{display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:10px;border:none;font-family:'Poppins',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;}
+        .mic-start{background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:#34D399;}
+        .mic-stop{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#F87171;}
+        .btn-change{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:'Poppins',sans-serif;font-size:0.8rem;padding:9px 14px;cursor:pointer;}
+        .voice-meter-wrap{display:none;margin-bottom:10px;}
+        .voice-meter-wrap.active{display:block;}
+        .vm-label{font-size:0.75rem;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+        .rec-dot{width:8px;height:8px;border-radius:50%;background:#F87171;animation:pulse 1s infinite;}
+        @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+        .voice-bars{display:flex;align-items:flex-end;gap:2px;height:50px;padding:6px 10px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;}
+        .vbar{width:5px;border-radius:3px;background:linear-gradient(to top,var(--primary),var(--secondary));min-height:4px;transition:height 0.1s;}
+        .vm-footer{display:flex;justify-content:space-between;font-size:0.7rem;color:var(--muted);margin-top:4px;}
+        .score-range{display:flex;align-items:center;gap:10px;margin-top:10px;}
+        .score-range label{font-size:0.75rem;color:var(--muted);min-width:80px;}
+        .score-range input[type=range]{flex:1;accent-color:var(--primary);}
+        .sval{min-width:36px;text-align:right;font-weight:700;color:var(--accent);font-size:0.82rem;}
+        .timer-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(249,115,22,0.15);border:1px solid rgba(249,115,22,0.3);border-radius:20px;padding:5px 14px;font-size:0.85rem;font-weight:700;color:var(--accent);margin-bottom:10px;}
+
+        .btn-grad{width:100%;padding:14px;background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;border-radius:12px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;transition:transform 0.2s;margin-top:8px;}
+        .btn-grad:hover{transform:translateY(-2px);}
+        .btn-grad:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+        .btn-next{width:100%;padding:14px;background:rgba(255,255,255,0.06);border:1px solid var(--primary);border-radius:12px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;margin-top:8px;}
+        .btn-next:hover{background:rgba(124,58,237,0.2);}
+
+        .result-box{display:none;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:20px;padding:32px;text-align:center;margin-top:24px;}
+        .rcircle{width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--green));display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 16px;}
+        .rscore{font-size:1.8rem;font-weight:800;}
+        .rlevel{display:inline-block;padding:5px 18px;border-radius:20px;font-size:0.85rem;font-weight:700;margin-bottom:14px;}
+        .lv-beginner{background:rgba(249,115,22,0.2);color:#FB923C;}
+        .lv-intermediate{background:rgba(59,130,246,0.2);color:#60A5FA;}
+        .lv-advanced{background:rgba(16,185,129,0.2);color:#34D399;}
+
+        .final-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:20px 0;}
+        @media(max-width:600px){.final-grid{grid-template-columns:repeat(3,1fr);}}
+        .fg-item{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;cursor:pointer;transition:background 0.2s,box-shadow 0.2s,transform 0.15s;animation:popIn 0.4s ease both;}
+        .fg-item:nth-child(1){animation-delay:0.02s;} .fg-item:nth-child(2){animation-delay:0.08s;} .fg-item:nth-child(3){animation-delay:0.14s;} .fg-item:nth-child(4){animation-delay:0.2s;} .fg-item:nth-child(5){animation-delay:0.26s;}
+        .fg-item:hover{background:rgba(255,255,255,0.07);transform:translateY(-2px);}
+        @keyframes fgFlash{0%,100%{background:rgba(255,255,255,0.04);box-shadow:none;}30%{background:rgba(255,255,255,0.09);box-shadow:0 0 0 1.5px rgba(255,255,255,0.35),0 10px 24px -8px rgba(124,58,237,0.5);}}
+        .fg-item.pulse{animation:fgFlash 0.8s ease;}
+        .improve-box{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:12px 16px;cursor:pointer;transition:background 0.2s,box-shadow 0.2s,transform 0.15s;animation:popIn 0.4s ease both;}
+        .improve-box:hover{background:rgba(255,255,255,0.07);transform:translateY(-1px);}
+        @keyframes improveFlash{0%,100%{background:rgba(255,255,255,0.04);box-shadow:none;}30%{background:rgba(124,58,237,0.14);box-shadow:0 0 0 1.5px var(--primary),0 8px 20px -8px rgba(124,58,237,0.5);}}
+        .improve-box.pulse{animation:improveFlash 0.8s ease;}
+        .fg-label{font-size:0.72rem;color:var(--muted);margin-bottom:6px;}
+        .fg-val{font-size:1.2rem;font-weight:700;}
+        .fg-bar{height:4px;border-radius:4px;background:rgba(255,255,255,0.08);margin-top:8px;overflow:hidden;}
+        .fg-fill{height:100%;border-radius:4px;}
+
+        .rec-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;text-align:left;}
+        @media(max-width:580px){.rec-grid{grid-template-columns:1fr;}}
+        @keyframes popIn{from{opacity:0;transform:translateY(10px) scale(0.96);}to{opacity:1;transform:translateY(0) scale(1);}}
+        .rcard{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:12px;cursor:pointer;transition:background 0.2s,box-shadow 0.2s,transform 0.15s;animation:popIn 0.4s ease both;}
+        .rcard:nth-child(1){animation-delay:0.02s;} .rcard:nth-child(2){animation-delay:0.08s;} .rcard:nth-child(3){animation-delay:0.14s;} .rcard:nth-child(4){animation-delay:0.2s;}
+        .rcard:hover{background:rgba(255,255,255,0.07);transform:translateY(-2px);}
+        @keyframes rcardFlash{0%,100%{background:rgba(255,255,255,0.04);box-shadow:none;transform:translateY(0);}30%{background:rgba(124,58,237,0.16);box-shadow:0 0 0 1.5px var(--primary),0 10px 26px -8px rgba(124,58,237,0.55);transform:translateY(-2px);}}
+        .rcard.pulse{animation:rcardFlash 0.8s ease;}
+        .rcard.pulse .rct{color:#fff;font-weight:800;}
+        .rce{font-size:1.1rem;margin-bottom:6px;}
+        .rct{font-size:0.82rem;font-weight:600;margin-bottom:3px;}
+        .rcd{font-size:0.73rem;color:var(--muted);}
+        .alert-error{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#F87171;padding:10px 14px;border-radius:10px;font-size:0.82rem;margin-bottom:12px;display:none;}
+    </style>
+</head>
+<body>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<div class="top-nav">
+    <div class="logo">
+        <div class="brain"><i class="fa-solid fa-brain" style="color:#fff;"></i></div>
+        SkillPath <span style="color:#9F67FF;">AI</span>
+    </div>
+    <a href="dashboard.html" style="font-size:0.82rem;color:var(--muted);text-decoration:none;">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+    </a>
+</div>
+
+<div class="wrap">
+
+    <div class="attempt-banner" id="attemptBanner">
+        <i class="fa-solid fa-shield-halved" style="color:var(--accent);font-size:1.2rem;flex-shrink:0;"></i>
+        <div>
+            <div style="font-size:0.92rem;font-weight:600;margin-bottom:3px;">⚠️ One Attempt Only</div>
+            <div style="font-size:0.8rem;color:var(--muted);">This assessment has 3 sessions: Technical (10 questions), Mixed (4 Aptitude + 3 Logical + 3 Domain), and Communication (3 tasks). Complete all to see your results.</div>
+        </div>
+    </div>
+
+    <div class="locked-box" id="lockedBox">
+        <div style="font-size:3rem;margin-bottom:16px;">🔒</div>
+        <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:8px;">Assessment Already Completed</h3>
+        <p style="color:var(--muted);font-size:0.88rem;margin-bottom:24px;">You have already taken this assessment. View your results on the dashboard.</p>
+        <a href="dashboard.html" class="btn-dash"><i class="fa-solid fa-chart-bar me-2"></i> View My Dashboard</a>
+    </div>
+
+    <div id="assessContent">
+
+        <div class="section-tabs" style="grid-template-columns:repeat(3,1fr);">
+            <div class="stab active" id="stab-technical" onclick="goToSection('technical')">
+                <div class="stab-icon">💻</div>
+                <div class="stab-name">Technical</div>
+                <div class="stab-status" id="st-technical">Not started</div>
+            </div>
+            <div class="stab" id="stab-mixed" onclick="goToSection('mixed')">
+                <div class="stab-icon">🧠</div>
+                <div class="stab-name">Mixed</div>
+                <div class="stab-status" id="st-mixed">Not started</div>
+            </div>
+            <div class="stab" id="stab-communication" onclick="goToSection('communication')">
+                <div class="stab-icon">🎤</div>
+                <div class="stab-name">Communication</div>
+                <div class="stab-status" id="st-communication">Not started</div>
+            </div>
+        </div>
+
+        <div class="section-page active" id="page-technical">
+            <div class="scard">
+                <div class="scard-header">
+                    <div class="scard-icon" style="background:rgba(124,58,237,0.2);">💻</div>
+                    <div>
+                        <div class="scard-title">Technical Skills Assessment</div>
+                    </div>
+                </div>
+                <div class="scard-desc" id="tech-desc">10 questions based on your selected skills from your profile.</div>
+                <div class="ap-row"><span style="color:var(--muted);">Progress</span><span style="color:var(--accent);font-weight:600;" id="tech-count">0 / 10</span></div>
+                <div class="ap-track"><div class="ap-fill" id="tech-prog" style="width:0%;background:linear-gradient(90deg,#7C3AED,#3B82F6);"></div></div>
+                <div class="alert-error" id="tech-err"></div>
+                <div id="techContainer"><div style="text-align:center;padding:28px;color:var(--muted);"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.4rem;display:block;margin-bottom:10px;"></i>Loading questions...</div></div>
+            </div>
+            <button class="btn-next" onclick="submitSection('technical')">
+                Next: Mixed Test <i class="fa-solid fa-arrow-right ms-2"></i>
+            </button>
+        </div>
+
+        <div class="section-page" id="page-mixed">
+            <div class="scard">
+                <div class="scard-header">
+                    <div class="scard-icon" style="background:rgba(59,130,246,0.2);">🧠</div>
+                    <div>
+                        <div class="scard-title">Mixed Assessment</div>
+                    </div>
+                </div>
+                <div class="scard-desc" id="mixed-desc">10 questions: 4 Aptitude + 3 Logical Reasoning + 3 Domain Knowledge (based on your career goal).</div>
+                <div class="ap-row"><span style="color:var(--muted);">Progress</span><span style="color:var(--accent);font-weight:600;" id="mix-count">0 / 10</span></div>
+                <div class="ap-track"><div class="ap-fill" id="mix-prog" style="width:0%;background:linear-gradient(90deg,#3B82F6,#10B981);"></div></div>
+                <div class="alert-error" id="mix-err"></div>
+                <div id="mixContainer"><div style="text-align:center;padding:28px;color:var(--muted);"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.4rem;display:block;margin-bottom:10px;"></i>Loading questions...</div></div>
+            </div>
+            <button class="btn-next" onclick="submitSection('mixed')">
+                Next: Communication Test <i class="fa-solid fa-arrow-right ms-2"></i>
+            </button>
+        </div>
+
+        <div class="section-page" id="page-communication">
+            <div class="scard">
+                <div class="scard-header">
+                    <div class="scard-icon" style="background:rgba(239,68,68,0.2);">🎤</div>
+                    <div>
+                        <div class="scard-title">Communication Assessment</div>
+                    </div>
+                </div>
+                <div class="scard-desc">3 tasks testing your English speaking — sentence reading, paragraph reading and topic speaking.</div>
+
+                <div class="ctask">
+                    <div class="ctask-header"><div class="tnum">1</div><div><div class="ttitle">Sentence Reading</div><div class="tsub">Read clearly and fluently</div></div></div>
+                    <div class="rtext" id="sentText">"Technology is transforming the way we learn, work, and communicate with each other in the modern world."</div>
+                    <div class="btn-row">
+                        <button class="mic-btn mic-start" id="micSent" onclick="toggleMic('sent','micSent','vm1')"><i class="fa-solid fa-microphone"></i> Start Recording</button>
+                        <button class="btn-change" onclick="changeSent()"><i class="fa-solid fa-shuffle me-1"></i> Change</button>
+                    </div>
+                    <div class="voice-meter-wrap" id="vm1">
+                        <div class="vm-label"><span class="rec-dot"></span> Recording — speak clearly</div>
+                        <div class="voice-bars" id="vbars1"></div>
+                        <div class="vm-footer"><span>Voice Level</span><span style="color:var(--accent);font-weight:700;" id="vlevel1">0%</span></div>
+                    </div>
+                    <div class="score-range"><label>Auto Score</label><div class="ap-track" style="flex:1;"><div class="ap-fill" id="sentBar" style="width:0%;background:linear-gradient(90deg,#7C3AED,#3B82F6);"></div></div><span class="sval" id="sentVal">—</span></div>
+                </div>
+
+                <div class="ctask">
+                    <div class="ctask-header"><div class="tnum">2</div><div><div class="ttitle">Paragraph Reading</div><div class="tsub">Read with pace and expression</div></div></div>
+                    <div class="rtext" id="paraText">Artificial Intelligence is no longer a concept of the future — it is a reality of today. From voice assistants to recommendation systems, AI is embedded in our daily lives. Students who learn AI fundamentals today will be the innovators and problem-solvers of tomorrow.</div>
+                    <div class="btn-row">
+                        <button class="mic-btn mic-start" id="micPara" onclick="toggleMic('para','micPara','vm2')"><i class="fa-solid fa-microphone"></i> Start Recording</button>
+                        <button class="btn-change" onclick="changePara()"><i class="fa-solid fa-shuffle me-1"></i> Change</button>
+                    </div>
+                    <div class="voice-meter-wrap" id="vm2">
+                        <div class="vm-label"><span class="rec-dot"></span> Recording — speak clearly</div>
+                        <div class="voice-bars" id="vbars2"></div>
+                        <div class="vm-footer"><span>Voice Level</span><span style="color:var(--accent);font-weight:700;" id="vlevel2">0%</span></div>
+                    </div>
+                    <div class="score-range"><label>Auto Score</label><div class="ap-track" style="flex:1;"><div class="ap-fill" id="paraBar" style="width:0%;background:linear-gradient(90deg,#7C3AED,#3B82F6);"></div></div><span class="sval" id="paraVal">—</span></div>
+                </div>
+
+                <div class="ctask">
+                    <div class="ctask-header"><div class="tnum">3</div><div><div class="ttitle">Topic Speaking</div><div class="tsub">Speak for 2 minutes</div></div></div>
+                    <div class="topic-box">
+                        <div style="font-size:0.72rem;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.06em;">Your Topic</div>
+                        <div class="ttopic" id="topicText">"How can technology help students learn better?"</div>
+                        <div style="font-size:0.75rem;color:var(--muted);margin-top:5px;"><i class="fa-solid fa-clock me-1"></i> Speak freely for 2 minutes</div>
+                    </div>
+                    <div id="timerDisplay" style="display:none;"><div class="timer-badge"><i class="fa-solid fa-circle-dot" style="animation:pulse 1s infinite;"></i> <span id="timerCount">2:00</span></div></div>
+                    <div class="btn-row">
+                        <button class="mic-btn mic-start" id="micTopic" onclick="toggleMic('topic','micTopic','vm3')"><i class="fa-solid fa-microphone"></i> Start Speaking</button>
+                        <button class="btn-change" onclick="changeTopic()"><i class="fa-solid fa-shuffle me-1"></i> Change Topic</button>
+                    </div>
+                    <div class="voice-meter-wrap" id="vm3">
+                        <div class="vm-label"><span class="rec-dot"></span> Recording — speak about the topic</div>
+                        <div class="voice-bars" id="vbars3"></div>
+                        <div class="vm-footer"><span>Voice Level</span><span style="color:var(--accent);font-weight:700;" id="vlevel3">0%</span></div>
+                    </div>
+                    <div class="score-range"><label>Auto Score</label><div class="ap-track" style="flex:1;"><div class="ap-fill" id="topicBar" style="width:0%;background:linear-gradient(90deg,#7C3AED,#3B82F6);"></div></div><span class="sval" id="topicVal">—</span></div>
+                </div>
+
+                <div class="alert-error" id="comm-err"></div>
+                <p style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;">Scores are calculated automatically from your recorded speaking time and voice activity for each task — they are not self-rated.</p>
+                <button class="btn-grad" onclick="submitCommunication()">
+                    <i class="fa-solid fa-paper-plane me-2"></i> Submit All & See My Results
+                </button>
+            </div>
+        </div>
+
+        <div class="result-box" id="finalResult">
+            <div class="rcircle"><div class="rscore" id="final-score">0%</div><div style="font-size:0.65rem;opacity:0.8;">Overall Score</div></div>
+            <div class="rlevel" id="final-level">Beginner</div>
+            <p style="color:var(--muted);font-size:0.85rem;margin-bottom:20px;" id="final-msg"></p>
+
+            <div class="final-grid">
+                <div class="fg-item" onclick="flashBox(this)">
+                    <div class="fg-label">Technical</div>
+                    <div class="fg-val" id="fs-technical" style="color:#7C3AED;">—</div>
+                    <div class="fg-bar"><div class="fg-fill" id="fb-technical" style="background:#7C3AED;width:0%;"></div></div>
+                </div>
+                <div class="fg-item" onclick="flashBox(this)">
+                    <div class="fg-label">Aptitude</div>
+                    <div class="fg-val" id="fs-aptitude" style="color:#3B82F6;">—</div>
+                    <div class="fg-bar"><div class="fg-fill" id="fb-aptitude" style="background:#3B82F6;width:0%;"></div></div>
+                </div>
+                <div class="fg-item" onclick="flashBox(this)">
+                    <div class="fg-label">Logical</div>
+                    <div class="fg-val" id="fs-logical" style="color:#10B981;">—</div>
+                    <div class="fg-bar"><div class="fg-fill" id="fb-logical" style="background:#10B981;width:0%;"></div></div>
+                </div>
+                <div class="fg-item" onclick="flashBox(this)">
+                    <div class="fg-label">Domain</div>
+                    <div class="fg-val" id="fs-domain" style="color:#F97316;">—</div>
+                    <div class="fg-bar"><div class="fg-fill" id="fb-domain" style="background:#F97316;width:0%;"></div></div>
+                </div>
+                <div class="fg-item" onclick="flashBox(this)">
+                    <div class="fg-label">Communication</div>
+                    <div class="fg-val" id="fs-communication" style="color:#F59E0B;">—</div>
+                    <div class="fg-bar"><div class="fg-fill" id="fb-communication" style="background:#F59E0B;width:0%;"></div></div>
+                </div>
+            </div>
+
+            <h5 style="font-size:0.9rem;font-weight:600;margin:16px 0 10px;text-align:left;">
+                <i class="fa-solid fa-route me-2" style="color:var(--accent);"></i>Your Recommended Learning Path
+            </h5>
+            <div class="rec-grid" id="final-recs"></div>
+
+            <h5 style="font-size:0.9rem;font-weight:600;margin:20px 0 10px;text-align:left;">
+                <i class="fa-solid fa-magnifying-glass-chart me-2" style="color:var(--secondary);"></i>What To Improve — Based On Your Actual Scores
+            </h5>
+            <div id="focus-areas" style="text-align:left;display:flex;flex-direction:column;gap:10px;"></div>
+
+            <button class="btn-grad" style="margin-top:20px;" onclick="location.href='dashboard.html'">
+                <i class="fa-solid fa-chart-bar me-2"></i> View My Full Dashboard
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const API_BASE    = "http://127.0.0.1:5000";
+
+// NEW: gives any box a brief "flash" of brightness on click that fades back
+// on its own — replaces the earlier sticky on/off toggle.
+function flashBox(el) {
+    el.classList.remove("pulse");
+    void el.offsetWidth;
+    el.classList.add("pulse");
+    el.addEventListener("animationend", function handler() {
+        el.classList.remove("pulse");
+        el.removeEventListener("animationend", handler);
+    });
+}
+const stored      = localStorage.getItem("currentUser");
+if (!stored) { window.location.href = "login.html"; }
+const currentUser = JSON.parse(stored || "{}");
+
+const sectionScores = { technical:0, aptitude:0, logical:0, domain:0, communication:0 };
+const sectionDone   = { technical:false, mixed:false, communication:false };
+let   techAnswers   = {}, mixAnswers = {};
+// NEW: per-skill breakdown, built from the technical section, read by dashboard.html
+let   skillBreakdown = {};
+// NEW: automatic communication metrics (duration + voice activity), captured per task instead of a self-picked score
+const commMetrics = {
+    sent:  { startTime:0, samples:[], duration:0, avgLevel:0 },
+    para:  { startTime:0, samples:[], duration:0, avgLevel:0 },
+    topic: { startTime:0, samples:[], duration:0, avgLevel:0 },
+};
+
+// FIX: shuffles a question's options (and remaps the correct-answer index) at
+// render time, so the correct answer isn't predictably in the same position
+// (previously most authored answers landed on option index 1 / "B").
+function shuffleOptions(q) {
+    const order = q.opts.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [order[i], order[j]] = [order[j], order[i]];
+    }
+    const newOpts = order.map(i => q.opts[i]);
+    const newAns  = order.indexOf(q.ans);
+    return { ...q, opts: newOpts, ans: newAns };
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+    [1,2,3].forEach(n => {
+        const el = document.getElementById(`vbars${n}`);
+        if (el) el.innerHTML = Array.from({length:28},()=>`<div class="vbar" style="height:4px;"></div>`).join("");
+    });
+
+    const done = localStorage.getItem("assessmentDone_" + currentUser.id);
+    if (done) {
+        document.getElementById("lockedBox").style.display      = "block";
+        document.getElementById("assessContent").style.display  = "none";
+        document.getElementById("attemptBanner").style.display  = "none";
+    } else {
+        loadTechnical();
+        loadMixed();
+    }
+});
+
+function goToSection(name) {
+    document.querySelectorAll(".section-page").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll(".stab").forEach(t => t.classList.remove("active"));
+    document.getElementById("page-" + name).classList.add("active");
+    document.getElementById("stab-" + name).classList.add("active");
+    window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function renderQuestions(questions, containerId, prefix, countId, progId) {
+    // shuffle each question's options in place so the correct answer's
+    // position is randomized (fixes the "answer is always option B" pattern)
+    for (let i = 0; i < questions.length; i++) questions[i] = shuffleOptions(questions[i]);
+    document.getElementById(containerId).innerHTML = questions.map((q, i) => `
+        <div class="qcard">
+            ${q.badge ? `<span class="qbadge" style="background:${q.badgeColor||'rgba(124,58,237,0.2)'};color:${q.badgeText||'#A78BFA'};">${q.badge}</span>` : ""}
+            <div class="qnum">Question ${i+1} of ${questions.length}</div>
+            <div class="qtext">${q.q}</div>
+            <div class="opts">
+                ${q.opts.map((o,j) => `
+                    <div class="opt" id="${prefix}-${i}-${j}" onclick="pickAnswer('${prefix}',${i},${j},${questions.length},'${countId}','${progId}')">
+                        <div class="oc" id="${prefix}-oc-${i}-${j}"></div><span>${o}</span>
+                    </div>`).join("")}
+            </div>
+        </div>`).join("");
+}
+
+function pickAnswer(prefix, qi, oi, total, countId, progId) {
+    const store = prefix==="tech" ? techAnswers : mixAnswers;
+    for(let j=0;j<4;j++){
+        const el=document.getElementById(`${prefix}-${qi}-${j}`);
+        const oc=document.getElementById(`${prefix}-oc-${qi}-${j}`);
+        if(el) el.classList.remove("sel");
+        if(oc) oc.innerHTML="";
+    }
+    document.getElementById(`${prefix}-${qi}-${oi}`).classList.add("sel");
+    document.getElementById(`${prefix}-oc-${qi}-${oi}`).innerHTML="✓";
+    store[qi] = oi;
+    const done = Object.keys(store).length;
+    document.getElementById(countId).textContent = `${done} / ${total}`;
+    document.getElementById(progId).style.width  = Math.round((done/total)*100) + "%";
+}
+
+function calcScore(answers, questions) {
+    let correct = 0;
+    questions.forEach((q,i) => { if(answers[i] === q.ans) correct++; });
+    return Math.round((correct / questions.length) * 100);
+}
+
+// NEW: compute per-skill correctness from the technical question pool so the
+// dashboard's "Skill Category Breakdown" shows a real score per skill instead
+// of repeating the overall technical score for every skill.
+function calcSkillBreakdown(answers, questions) {
+    const bySkill = {};
+    questions.forEach((q,i) => {
+        const key = q.skill || q.badge || "General";
+        if (!bySkill[key]) bySkill[key] = { correct:0, total:0 };
+        bySkill[key].total++;
+        if (answers[i] === q.ans) bySkill[key].correct++;
+    });
+    return bySkill;
+}
+
+let techQ=[], mixQ=[];
+
+// Computes separate aptitude / logical / domain percentages out of the
+// combined 10-question Mixed pool, grouped by each question's `type` tag.
+function calcTypeBreakdown(answers, questions) {
+    const byType = {};
+    questions.forEach((q,i) => {
+        const key = q.type;
+        if (!byType[key]) byType[key] = { correct:0, total:0 };
+        byType[key].total++;
+        if (answers[i] === q.ans) byType[key].correct++;
+    });
+    const pct = (t) => byType[t] && byType[t].total ? Math.round((byType[t].correct/byType[t].total)*100) : 0;
+    return { aptitude: pct("aptitude"), logical: pct("logical"), domain: pct("domain") };
+}
+
+function submitSection(section) {
+    const configs = {
+        technical: { answers:techAnswers, questions:techQ, errId:"tech-err", next:"mixed",         total:10 },
+        mixed:     { answers:mixAnswers,  questions:mixQ,  errId:"mix-err",  next:"communication", total:10 },
+    };
+    const cfg = configs[section];
+    if (!cfg) return;
+
+    if (Object.keys(cfg.answers).length < cfg.total) {
+        const err = document.getElementById(cfg.errId);
+        err.textContent = `Please answer all ${cfg.total} questions before continuing.`;
+        err.style.display = "block";
+        setTimeout(()=>err.style.display="none", 3000);
+        return;
+    }
+
+    sectionDone[section] = true;
+
+    if (section === "technical") {
+        sectionScores.technical = calcScore(cfg.answers, cfg.questions);
+        document.getElementById("st-technical").textContent = sectionScores.technical + "% ✓";
+        document.getElementById("stab-technical").classList.add("done");
+        // NEW: build the real per-skill breakdown right after the technical section
+        skillBreakdown = calcSkillBreakdown(cfg.answers, cfg.questions);
+    } else if (section === "mixed") {
+        const { aptitude, logical, domain } = calcTypeBreakdown(cfg.answers, cfg.questions);
+        sectionScores.aptitude = aptitude;
+        sectionScores.logical  = logical;
+        sectionScores.domain   = domain;
+        const mixOverall = Math.round((aptitude + logical + domain) / 3);
+        document.getElementById("st-mixed").textContent = mixOverall + "% ✓";
+        document.getElementById("stab-mixed").classList.add("done");
+    }
+
+    goToSection(cfg.next);
+}
+
+const QB = {
+"Python":[
+    {q:"What is the output of print(type([]))?",opts:["<class 'list'>","<class 'array'>","<class 'tuple'>","Error"],ans:0},
+    {q:"Which keyword defines a function in Python?",opts:["function","def","fun","define"],ans:1},
+    {q:"What does len('hello') return?",opts:["4","5","6","Error"],ans:1},
+    {q:"Which is NOT a Python data type?",opts:["int","float","char","str"],ans:2},
+    {q:"How do you create a dictionary in Python?",opts:["[]","()","{}","<>"],ans:2},
+    {q:"What does 'append' do to a list?",opts:["Removes item","Adds to end","Sorts list","Clears list"],ans:1},
+    {q:"What is the output of 2**3?",opts:["6","8","9","23"],ans:1},
+    {q:"What keyword handles exceptions?",opts:["catch","except","error","handle"],ans:1},
+    {q:`What does this code print?\n<pre>x = [1,2,3]\nprint(len(x))</pre>`,opts:["1","2","3","Error"],ans:2,badge:"Coding",badgeColor:"rgba(16,185,129,0.2)",badgeText:"#34D399"},
+    {q:"What is a lambda function?",opts:["A named function","An anonymous one-line function","A class","None"],ans:1},
+],
+"Java":[
+    {q:"Entry point of a Java program?",opts:["start()","main()","run()","init()"],ans:1},
+    {q:"Size of int in Java?",opts:["2 bytes","4 bytes","8 bytes","Depends"],ans:1},
+    {q:"Keyword for inheritance in Java?",opts:["implements","inherits","extends","super"],ans:2},
+    {q:"JVM stands for?",opts:["Java Virtual Machine","Java Variable Method","Java Version Manager","None"],ans:0},
+    {q:"Data type for true/false in Java?",opts:["int","boolean","char","byte"],ans:1},
+    {q:"What does 'final' keyword do?",opts:["Creates loop","Prevents override/reassignment","Deletes variable","None"],ans:1},
+    {q:"What is a constructor?",opts:["Destroys objects","Called when object is created","Static method","None"],ans:1},
+    {q:"What does 'this' refer to?",opts:["Parent class","Current object","Static method","None"],ans:1},
+    {q:`What does this Java code print?\n<pre>int x = 5;\nSystem.out.println(x++);</pre>`,opts:["6","5","4","Error"],ans:1,badge:"Coding",badgeColor:"rgba(16,185,129,0.2)",badgeText:"#34D399"},
+    {q:"What is polymorphism?",opts:["One form","Many forms of a method","A design pattern","None"],ans:1},
+],
+"JavaScript":[
+    {q:"Block-scoped variable keyword?",opts:["var","let","local","define"],ans:1},
+    {q:"What does === check?",opts:["Value only","Type only","Both value and type","Neither"],ans:2},
+    {q:"typeof null returns?",opts:["null","undefined","object","string"],ans:2},
+    {q:"Method to add element to end of array?",opts:["push()","pop()","shift()","append()"],ans:0},
+    {q:"Symbol for template literals?",opts:["Single quote","Double quote","Backtick","Hash"],ans:2},
+    {q:"What does JSON stand for?",opts:["JavaScript Object Notation","Java Object Name","JavaScript Online","None"],ans:0},
+    {q:"What is a closure?",opts:["A loop","Function remembering its outer scope","A class","None"],ans:1},
+    {q:"What does 'async/await' do?",opts:["Synchronous code","Handles async operations","Creates loops","None"],ans:1},
+    {q:`What is the output?\n<pre>let a=[1,2,3];\nconsole.log(a.length);</pre>`,opts:["1","2","3","Error"],ans:2,badge:"Coding",badgeColor:"rgba(16,185,129,0.2)",badgeText:"#34D399"},
+    {q:"What does 'map()' do on array?",opts:["Filters","Creates new array transforming each element","Sorts","None"],ans:1},
+],
+"SQL":[
+    {q:"SQL command to retrieve data?",opts:["INSERT","UPDATE","SELECT","DELETE"],ans:2},
+    {q:"What does GROUP BY do?",opts:["Sorts rows","Groups rows with same values","Joins tables","Filters rows"],ans:1},
+    {q:"Constraint ensuring unique values?",opts:["PRIMARY KEY","FOREIGN KEY","UNIQUE","NOT NULL"],ans:2},
+    {q:"What does ORDER BY do?",opts:["Groups data","Sorts results","Filters","Joins tables"],ans:1},
+    {q:"Function to count rows?",opts:["SUM()","COUNT()","TOTAL()","NUMBER()"],ans:1},
+    {q:"What does INNER JOIN return?",opts:["All left rows","All right rows","Only matching rows","All rows"],ans:2},
+    {q:"What does HAVING do?",opts:["Filters rows","Filters grouped results","Joins tables","None"],ans:1},
+    {q:"What does DROP TABLE do?",opts:["Deletes all rows","Deletes table completely","Renames table","None"],ans:1},
+    {q:`What does this SQL return?\n<pre>SELECT COUNT(*) FROM users\nWHERE age > 18;</pre>`,opts:["All user names","Count of users older than 18","All users aged 18","Error"],ans:1,badge:"Coding",badgeColor:"rgba(16,185,129,0.2)",badgeText:"#34D399"},
+    {q:"What is a PRIMARY KEY?",opts:["Any column","Uniquely identifies each row","Foreign reference","None"],ans:1},
+],
+"HTML / CSS":[
+    {q:"HTML tag for hyperlink?",opts:["<link>","<a>","<href>","<url>"],ans:1},
+    {q:"CSS property to change text color?",opts:["font-color","text-color","color","foreground"],ans:2},
+    {q:"'div' stands for?",opts:["Division","Document","Display","Data"],ans:0},
+    {q:"CSS stands for?",opts:["Computer Style","Creative Style","Cascading Style Sheet","Colorful Style"],ans:2},
+    {q:"CSS property for space outside element?",opts:["padding","spacing","margin","border"],ans:2},
+    {q:"What is Flexbox?",opts:["A grid","1D layout system for elements","CSS animation","None"],ans:1},
+    {q:"What does z-index do?",opts:["Sets size","Controls stacking order","Sets opacity","None"],ans:1},
+    {q:"What is a media query?",opts:["A DB query","CSS rules based on screen size","HTML tag","None"],ans:1},
+    {q:`What does this CSS do?\n<pre>div { display: none; }</pre>`,opts:["Shows div","Hides div keeping space","Removes div from layout","Colors div"],ans:2,badge:"Coding",badgeColor:"rgba(16,185,129,0.2)",badgeText:"#34D399"},
+    {q:"What is semantic HTML?",opts:["Colored HTML","Tags describing meaning (header,nav,article)","JS HTML","None"],ans:1},
+],
+"C / C++":[
+    {q:"Symbol for pointer declaration?",opts:["&","*","@","#"],ans:1},
+    {q:"'cout' does what in C++?",opts:["Takes input","Gives output","Declares variables","None"],ans:1},
+    {q:"Header for I/O in C?",opts:["<iostream>","<stdio.h>","<conio.h>","<string.h>"],ans:1},
+    {q:"What is a pointer?",opts:["Stores a value","Stores memory address","A function","None"],ans:1},
+    {q:"'&' before variable means?",opts:["Pointer to","Address of","Value of","None"],ans:1},
+    {q:"Loop checking condition after execution?",opts:["for","while","do-while","foreach"],ans:2},
+    {q:"What does malloc() do?",opts:["Frees memory","Allocates memory dynamically","Creates array","None"],ans:1},
+    {q:"What is a virtual function?",opts:["Cannot be overridden","Can be overridden in derived class","Static function","None"],ans:1},
+    {q:`What does this C code print?\n<pre>int x=10;\nint *p=&x;\n*p=20;\nprintf("%d",x);</pre>`,opts:["10","20","0","Error"],ans:1,badge:"Coding",badgeColor:"rgba(16,185,129,0.2)",badgeText:"#34D399"},
+    {q:"What is a destructor?",opts:["Creates objects","Called when object leaves scope","Initializes","None"],ans:1},
+],
+"Machine Learning":[
+    {q:"Algorithm for classification?",opts:["Linear Regression","Logistic Regression","K-Means","PCA"],ans:1},
+    {q:"What does overfitting mean?",opts:["Good test performance","Memorizes training data","Ignores data","None"],ans:1},
+    {q:"What is supervised learning?",opts:["Labeled data","No data","Clustering","None"],ans:0},
+    {q:"What is gradient descent?",opts:["Going uphill","Optimization minimizing loss","A loss function","None"],ans:1},
+    {q:"What is a confusion matrix?",opts:["Random matrix","Shows correct/incorrect predictions","A model","None"],ans:1},
+    {q:"What is cross-validation?",opts:["Testing on training","Evaluating with multiple train/test splits","A model","None"],ans:1},
+    {q:"What is a random forest?",opts:["One decision tree","Ensemble of decision trees","A neural network","None"],ans:1},
+    {q:"What is regularization?",opts:["Increases complexity","Prevents overfitting","A type of loss","None"],ans:1},
+    {q:`What does this ML code do?\n<pre>model.fit(X_train, y_train)\npred = model.predict(X_test)</pre>`,opts:["Only predicts","Trains model then predicts","Creates model","Deletes model"],ans:1,badge:"Coding",badgeColor:"rgba(16,185,129,0.2)",badgeText:"#34D399"},
+    {q:"What does PCA stand for?",opts:["Principal Component Analysis","Primary Cluster Algorithm","None","Pattern Classification"],ans:0},
+],
+"Git":[
+    {q:"Command to initialize Git?",opts:["git start","git init","git new","git create"],ans:1},
+    {q:"What does 'git commit' do?",opts:["Uploads to GitHub","Saves changes locally","Deletes changes","None"],ans:1},
+    {q:"Command to show commit history?",opts:["git history","git log","git show","git track"],ans:1},
+    {q:"What does 'git pull' do?",opts:["Pushes changes","Fetches and merges from remote","Creates branch","None"],ans:1},
+    {q:"Command to stage changes?",opts:["git save","git add","git push","git stage"],ans:1},
+    {q:"What does 'git clone' do?",opts:["Creates new repo","Copies remote repo locally","Deletes repo","None"],ans:1},
+    {q:"What does '.gitignore' do?",opts:["Tracks files","Specifies files Git should ignore","Deletes files","None"],ans:1},
+    {q:"What is a merge conflict?",opts:["A bug","Two branches modify same part of file","A commit error","None"],ans:1},
+    {q:`What does this do?\n<pre>git add .\ngit commit -m "fix"\ngit push origin main</pre>`,opts:["Deletes files","Stages, commits and pushes to GitHub","Downloads code","Creates branch"],ans:1,badge:"Coding",badgeColor:"rgba(16,185,129,0.2)",badgeText:"#34D399"},
+    {q:"What does 'git stash' do?",opts:["Deletes changes","Temporarily saves uncommitted changes","Commits changes","None"],ans:1},
+],
+"Problem Solving":[
+    {q:"Time complexity of binary search?",opts:["O(n)","O(log n)","O(n²)","O(1)"],ans:1},
+    {q:"Data structure using LIFO?",opts:["Queue","Stack","Array","Linked List"],ans:1},
+    {q:"What is recursion?",opts:["A loop","Function calling itself","A class","None"],ans:1},
+    {q:"Sorting with O(n log n) average?",opts:["Bubble Sort","Selection Sort","Merge Sort","Insertion Sort"],ans:2},
+    {q:"Data structure using FIFO?",opts:["Stack","Queue","Tree","Heap"],ans:1},
+    {q:"What is dynamic programming?",opts:["Fast coding","Breaking into subproblems storing results","Websites","None"],ans:1},
+    {q:"What is a hash table?",opts:["A DB table","Maps keys to values","A sorting algorithm","None"],ans:1},
+    {q:"What is memoization?",opts:["Deleting data","Caching results of function calls","A loop","None"],ans:1},
+    {q:`What does this return when n=5?\n<pre>def f(n):\n  if n<=1: return n\n  return f(n-1)+f(n-2)</pre>`,opts:["3","5","8","10"],ans:1,badge:"Coding",badgeColor:"rgba(16,185,129,0.2)",badgeText:"#34D399"},
+    {q:"What is BFS?",opts:["Depth-first","Breadth-First Search — level by level","Binary search","None"],ans:1},
+],
+"React":[
+    {q:"What is JSX?",opts:["A database","JavaScript syntax extension for writing UI","A CSS framework","None"],ans:1},
+    {q:"Which hook manages state in a function component?",opts:["useEffect","useState","useRef","useMemo"],ans:1},
+    {q:"What does useEffect do?",opts:["Manages state","Runs side effects after render","Styles components","None"],ans:1},
+    {q:"What is a prop in React?",opts:["A CSS class","Data passed from parent to child component","A hook","None"],ans:1},
+    {q:"What is the virtual DOM?",opts:["A real browser DOM","In-memory representation used to optimize UI updates","A database","None"],ans:1},
+    {q:"What does 'key' prop help React do when rendering lists?",opts:["Style items","Identify which items changed/added/removed","Sort items","None"],ans:1},
+    {q:"What is a controlled component?",opts:["A component with no state","Form element whose value is controlled by React state","A class component","None"],ans:1},
+    {q:"What does useContext do?",opts:["Creates routes","Shares data across components without prop drilling","Styles components","None"],ans:1},
+    {q:`What does this code render?\n<pre>const [count,setCount]=useState(0);\nreturn &lt;button onClick={()=&gt;setCount(count+1)}&gt;{count}&lt;/button&gt;</pre>`,opts:["A static button","A button that increments count on click","An error","A text input"],ans:1,badge:"Coding",badgeColor:"rgba(16,185,129,0.2)",badgeText:"#34D399"},
+    {q:"What is React Router used for?",opts:["State management","Client-side navigation between views","Styling","API calls"],ans:1},
+],
+"Node.js":[
+    {q:"What is Node.js?",opts:["A browser","JavaScript runtime built on Chrome's V8 engine","A database","A CSS framework"],ans:1},
+    {q:"Which module is used to create a server in Node.js?",opts:["fs","http","path","os"],ans:1},
+    {q:"What does npm stand for?",opts:["Node Package Manager","New Program Module","Node Program Manager","None"],ans:0},
+    {q:"What is package.json used for?",opts:["Styling","Storing project metadata and dependencies","Database schema","None"],ans:1},
+    {q:"What is Express.js?",opts:["A database","Minimal web framework for Node.js","A frontend library","None"],ans:1},
+    {q:"What does 'require()' do in Node.js?",opts:["Deletes a module","Imports a module","Starts a server","None"],ans:1},
+    {q:"Is Node.js single-threaded or multi-threaded by default?",opts:["Multi-threaded","Single-threaded with an event loop","Neither","Depends on OS"],ans:1},
+    {q:"What is middleware in Express?",opts:["A database","Function that runs between request and response","A template engine","None"],ans:1},
+    {q:`What does this Node.js code do?\n<pre>app.get('/', (req,res)=&gt;{\n  res.send('Hello');\n});</pre>`,opts:["Deletes a route","Handles GET requests to '/' and responds with text","Creates a database","None"],ans:1,badge:"Coding",badgeColor:"rgba(16,185,129,0.2)",badgeText:"#34D399"},
+    {q:"What is an event loop?",opts:["A UI loop","Mechanism that handles async operations in Node.js","A database query","None"],ans:1},
+],
+"Data Analysis":[
+    {q:"What is the first step in data analysis?",opts:["Building a model","Understanding and cleaning the data","Deploying to production","Writing a report"],ans:1},
+    {q:"What is a pivot table used for?",opts:["Storing raw data","Summarizing and reorganizing data for insights","Writing code","None"],ans:1},
+    {q:"What does 'mean' represent in a dataset?",opts:["Middle value","Average value","Most frequent value","Spread of data"],ans:1},
+    {q:"What is a correlation coefficient close to 1 indicate?",opts:["No relationship","Strong positive relationship","Strong negative relationship","Random data"],ans:1},
+    {q:"Which chart is best for showing trends over time?",opts:["Pie chart","Line chart","Scatter plot","Histogram"],ans:1},
+    {q:"What is an outlier?",opts:["The average value","A data point far from other observations","The most common value","A missing value"],ans:1},
+    {q:"What does 'data cleaning' involve?",opts:["Deleting all data","Handling missing values, duplicates and errors","Only formatting colors","Writing SQL"],ans:1},
+    {q:"What is a KPI?",opts:["A chart type","A measurable value showing progress toward a goal","A database","A programming language"],ans:1},
+    {q:"What does a bar chart best compare?",opts:["Trends over time","Categories against each other","Correlation","Parts of a whole"],ans:1},
+    {q:"What is normalization in data analysis?",opts:["Deleting outliers","Scaling values to a common range","Sorting data","Merging tables"],ans:1},
+],
+"Excel":[
+    {q:"What symbol starts a formula in Excel?",opts:["#","=","@","$"],ans:1},
+    {q:"Which function adds a range of cells?",opts:["=ADD()","=SUM()","=TOTAL()","=PLUS()"],ans:1},
+    {q:"What does VLOOKUP do?",opts:["Sorts data","Searches for a value and returns related data from another column","Deletes duplicates","Formats cells"],ans:1},
+    {q:"What is a pivot table used for?",opts:["Writing macros","Summarizing large datasets interactively","Formatting text","Creating charts only"],ans:1},
+    {q:"Which symbol locks a cell reference when copying a formula?",opts:["%","$","&","*"],ans:1},
+    {q:"What does the COUNTIF function do?",opts:["Adds all values","Counts cells that meet a condition","Averages values","Deletes rows"],ans:1},
+    {q:"What is conditional formatting used for?",opts:["Sorting rows","Highlighting cells based on rules","Creating macros","None"],ans:1},
+    {q:"Which chart type is best for showing proportions of a whole?",opts:["Line chart","Pie chart","Scatter plot","Bar chart"],ans:1},
+    {q:"What does the IF function do?",opts:["Deletes cells","Returns a value depending on whether a condition is true or false","Sorts a column","Formats numbers"],ans:1},
+    {q:"What is a macro in Excel?",opts:["A chart type","Recorded/coded set of steps to automate tasks","A cell format","A filter"],ans:1},
+],
+"Power BI":[
+    {q:"What is Power BI mainly used for?",opts:["Writing code","Business intelligence and data visualization","Sending emails","Operating systems"],ans:1},
+    {q:"What is a 'measure' in Power BI?",opts:["A chart color","A calculation created using DAX for analysis","A table name","A file type"],ans:1},
+    {q:"What language is used to write calculations in Power BI?",opts:["SQL only","DAX","Python only","HTML"],ans:1},
+    {q:"What is Power Query used for?",opts:["Visualizing data only","Connecting to, transforming and cleaning data","Writing reports","Creating slides"],ans:1},
+    {q:"What is a dashboard in Power BI?",opts:["A single chart","A collection of visuals on one screen for monitoring data","A raw data table","A formula"],ans:1},
+    {q:"What does 'Relationships' between tables define in Power BI?",opts:["Chart colors","How tables are connected for combined analysis","File size","None"],ans:1},
+    {q:"What is a slicer used for?",opts:["Deleting data","Filtering report visuals interactively","Formatting numbers","Exporting files"],ans:1},
+    {q:"What format are Power BI reports typically saved as?",opts:[".pbix",".xls",".csv",".exe"],ans:0},
+    {q:"What is drill-down used for in Power BI?",opts:["Deleting data","Exploring data at a more detailed level","Changing colors","Creating a new file"],ans:1},
+    {q:"What is Power BI Service mainly used for?",opts:["Local-only editing","Publishing and sharing reports online","Writing code","Operating system tasks"],ans:1},
+],
+"Figma / UI Design":[
+    {q:"What is a Frame in Figma used for?",opts:["A code block","A container that holds design elements like an artboard","A font style","A plugin"],ans:1},
+    {q:"What is a design system?",opts:["A single icon","A reusable set of components and standards for consistent design","A coding library","A file format"],ans:1},
+    {q:"What does 'Auto Layout' in Figma help with?",opts:["Writing code","Automatically arranging and resizing elements responsively","Exporting videos","Managing users"],ans:1},
+    {q:"What is a wireframe?",opts:["A final polished design","A low-fidelity layout sketch showing structure","A color palette","A font file"],ans:1},
+    {q:"What is a component in Figma?",opts:["A random shape","A reusable design element that updates everywhere it's used","A plugin","A comment"],ans:1},
+    {q:"What does prototyping in Figma let you do?",opts:["Write backend code","Simulate interactions and navigation between screens","Compress images","Manage databases"],ans:1},
+    {q:"What is the purpose of a style guide?",opts:["To store code","To define consistent colors, fonts and spacing across a design","To host the website","To manage servers"],ans:1},
+    {q:"What does 'contrast ratio' relate to in UI design?",opts:["Loading speed","Text/background readability and accessibility","File size","Animation speed"],ans:1},
+    {q:"What is usability testing?",opts:["Testing server load","Observing real users interact with a design to find issues","Writing unit tests","Checking code syntax"],ans:1},
+    {q:"What does 'responsive design' mean?",opts:["Fast servers","Design that adapts to different screen sizes","Only mobile design","Only desktop design"],ans:1},
+],
+"Cloud Basics":[
+    {q:"What does 'cloud computing' mean?",opts:["Only local storage","Delivering computing services over the internet","A weather app","A programming language"],ans:1},
+    {q:"What does IaaS stand for?",opts:["Infrastructure as a Service","Internet as a Service","Information as a Service","None"],ans:0},
+    {q:"What is a virtual machine?",opts:["A physical server","A software-based emulation of a physical computer","A database","A network cable"],ans:1},
+    {q:"What is auto-scaling in cloud services?",opts:["Manual server upgrades","Automatically adjusting resources based on demand","Deleting unused files","Backing up data only"],ans:1},
+    {q:"What does SaaS mean?",opts:["Software as a Service","Server as a Service","Storage as a Service","None"],ans:0},
+    {q:"What is object storage typically used for?",opts:["Running applications","Storing large amounts of unstructured data like files and images","Writing code","Managing users"],ans:1},
+    {q:"What is a load balancer used for?",opts:["Encrypting data","Distributing incoming traffic across multiple servers","Compressing files","Formatting code"],ans:1},
+    {q:"What is 'high availability' in cloud systems?",opts:["Cheap pricing","Designing systems to remain operational with minimal downtime","Fast internet only","Unlimited storage"],ans:1},
+    {q:"What does a Content Delivery Network (CDN) do?",opts:["Stores databases","Delivers content faster by serving it from servers near the user","Writes code","Manages emails"],ans:1},
+    {q:"What is the main benefit of cloud computing for startups?",opts:["No benefit","Pay only for what you use without owning physical hardware","Free unlimited hardware","Slower deployment"],ans:1},
+],
+"Cybersecurity Basics":[
+    {q:"What is phishing?",opts:["A firewall type","A scam to trick users into revealing sensitive information","A type of encryption","An antivirus tool"],ans:1},
+    {q:"What does a firewall do?",opts:["Speeds up internet","Monitors and controls incoming/outgoing network traffic","Deletes viruses","Backs up files"],ans:1},
+    {q:"What is two-factor authentication (2FA)?",opts:["Using two passwords only","An extra verification step beyond just a password","A firewall setting","A type of virus"],ans:1},
+    {q:"What is malware?",opts:["A helpful tool","Malicious software designed to harm or exploit systems","A firewall","An update"],ans:1},
+    {q:"What does encryption do?",opts:["Deletes data","Converts data into a coded form to prevent unauthorized access","Speeds up a network","Compresses files"],ans:1},
+    {q:"What is a strong password practice?",opts:["Using your name","Using a long mix of letters, numbers and symbols","Reusing the same password everywhere","Sharing it with friends"],ans:1},
+    {q:"What is a DDoS attack?",opts:["A single email scam","Overwhelming a system with traffic to make it unavailable","A software update","An encryption method"],ans:1},
+    {q:"What is a VPN mainly used for?",opts:["Speeding up gaming","Creating a secure, encrypted connection over the internet","Formatting a disk","Compressing files"],ans:1},
+    {q:"What is social engineering in cybersecurity?",opts:["A coding technique","Manipulating people into giving up confidential information","A firewall rule","A backup method"],ans:1},
+    {q:"What is the purpose of regular software updates?",opts:["To slow down devices","To patch security vulnerabilities and bugs","To use more storage","No real purpose"],ans:1},
+],
+"Communication":[
+    {q:"What is active listening?",opts:["Waiting for your turn to speak","Fully concentrating on and understanding the speaker","Interrupting frequently","Ignoring the speaker"],ans:1},
+    {q:"What is the main goal of clear workplace communication?",opts:["To sound impressive","To be understood accurately and avoid confusion","To use complex words","To speak as fast as possible"],ans:1},
+    {q:"What is non-verbal communication?",opts:["Only written words","Body language, tone and facial expressions","Only emails","Only phone calls"],ans:1},
+    {q:"Why is feedback important in communication?",opts:["It is not important","It helps confirm understanding and improve future communication","It slows things down","It only matters for managers"],ans:1},
+    {q:"What is the STAR method used for?",opts:["Coding practice","Structuring answers in interviews (Situation, Task, Action, Result)","Sorting emails","Writing code comments"],ans:1},
+    {q:"What is empathy in communication?",opts:["Ignoring others' feelings","Understanding and sharing the feelings of another person","Always agreeing with others","Avoiding conversations"],ans:1},
+    {q:"What makes an email professional?",opts:["Using slang","Clear subject, polite tone and concise content","Very long paragraphs","No greeting"],ans:1},
+    {q:"What is the purpose of a presentation's structure (intro-body-conclusion)?",opts:["No real purpose","To help the audience follow and retain information","To make it longer","To confuse listeners"],ans:1},
+    {q:"What is assertive communication?",opts:["Being aggressive","Expressing your views confidently while respecting others","Staying silent always","Avoiding all conflict"],ans:1},
+    {q:"Why is asking clarifying questions useful?",opts:["It wastes time","It ensures accurate understanding before responding or acting","It shows weakness","It is unnecessary"],ans:1},
+],
+};
+
+const defaultQ = [
+    {q:"How confident are you with this skill?",opts:["Expert","Intermediate","Beginner","Just started"],ans:0},
+    {q:"Have you used this skill in a project?",opts:["Yes, multiple","Yes, one","Practiced only","Not yet"],ans:0},
+    {q:"How often do you practice?",opts:["Daily","Weekly","Rarely","Never"],ans:0},
+];
+
+function loadTechnical() {
+    const skills = JSON.parse(localStorage.getItem("profileSkills") || "[]");
+    if (skills.length === 0) {
+        techQ = defaultQ.slice(0,10).map(q => ({...q, skill:"General"}));
+    } else {
+        document.getElementById("tech-desc").textContent = `10 questions from your skills: ${skills.join(", ")}`;
+        let pool = [];
+        skills.forEach(skill => {
+            const bank = QB[skill] || defaultQ;
+            [...bank].sort(()=>0.5-Math.random()).forEach(q => pool.push({...q, skill, badge:q.badge||skill, badgeColor:q.badgeColor||"rgba(124,58,237,0.2)", badgeText:q.badgeText||"#A78BFA"}));
+        });
+        pool = pool.sort(()=>0.5-Math.random());
+        techQ = pool.slice(0,10);
+    }
+    renderQuestions(techQ, "techContainer", "tech", "tech-count", "tech-prog");
+}
+
+const AptitudeQ = [
+    {q:"If a train travels 60 km in 1 hour, how far will it travel in 2.5 hours?",opts:["120 km","140 km","150 km","160 km"],ans:2},
+    {q:"What is 15% of 200?",opts:["25","30","35","40"],ans:1},
+    {q:"A shopkeeper buys an item for ₹80 and sells it for ₹100. What is the profit percentage?",opts:["20%","25%","30%","15%"],ans:1},
+    {q:"If 5 workers complete a task in 10 days, how many days will 10 workers take?",opts:["4 days","5 days","6 days","8 days"],ans:1},
+    {q:"What is the next number in the series: 2, 4, 8, 16, __?",opts:["24","28","30","32"],ans:3},
+    {q:"Find the missing number: 3, 6, 11, 18, 27, __",opts:["36","38","40","42"],ans:1},
+    {q:"If A is 3 years older than B and B is 2 years younger than C, who is oldest?",opts:["A","B","C","Cannot determine"],ans:0},
+    {q:"What is the average of 10, 20, 30, 40, 50?",opts:["25","30","35","40"],ans:1},
+    {q:"A car travels at 40 km/h. How long to travel 160 km?",opts:["3 hours","4 hours","5 hours","6 hours"],ans:1},
+    {q:"If 2x + 3 = 11, what is x?",opts:["3","4","5","6"],ans:1},
+    {q:"What comes next: 1, 4, 9, 16, 25, __?",opts:["30","34","36","40"],ans:2},
+    {q:"A rectangle has length 8 cm and width 5 cm. What is the perimeter?",opts:["26 cm","28 cm","30 cm","32 cm"],ans:0},
+    {q:"Simple interest on ₹1000 at 10% for 2 years?",opts:["₹100","₹150","₹200","₹250"],ans:2},
+    {q:"If 30% of a number is 90, what is the number?",opts:["250","270","300","330"],ans:2},
+    {q:"Find the odd one out: 2, 3, 5, 7, 9, 11",opts:["3","7","9","11"],ans:2},
+    {q:"A tap fills a tank in 4 hours, another drains in 6 hours. Together?",opts:["10 hours","12 hours","14 hours","16 hours"],ans:1},
+    {q:"What is 25% of 480?",opts:["100","110","120","130"],ans:2},
+    {q:"If APPLE = 50, what is MANGO? (A=1,B=2...)",opts:["46","47","48","50"],ans:0},
+    {q:"Ratio of 3:5 means if total is 40, the larger share is?",opts:["20","22","25","24"],ans:2},
+    {q:"Speed of 72 km/h equals how many m/s?",opts:["18 m/s","20 m/s","22 m/s","25 m/s"],ans:1},
+];
+
+const LogicalQ = [
+    {q:"All cats are animals. All animals have legs. Therefore?",opts:["Some cats have no legs","All cats have legs","Animals are cats","None"],ans:1},
+    {q:"If all roses are flowers and some flowers fade quickly, then?",opts:["All roses fade","Some roses may fade","No roses fade","None"],ans:1},
+    {q:"What is the mirror image concept? If LEFT = RIGHT, then UP = ?",opts:["DOWN","LEFT","RIGHT","DIAGONAL"],ans:0},
+    {q:"Find next in series: A, C, E, G, ?",opts:["H","I","J","K"],ans:1},
+    {q:"If BOOK is coded as YLLP, what is CAT?",opts:["XZG","XBW","WBX","ZAT"],ans:0},
+    {q:"A is taller than B, C is shorter than A, B is taller than C. Who is shortest?",opts:["A","B","C","Cannot determine"],ans:2},
+    {q:"Blood relation: If X is Y's father and Y is Z's son, what is X to Z?",opts:["Brother","Father","Grandfather","Uncle"],ans:2},
+    {q:"Statement: All tables are furniture. Some furniture is wooden. Conclusion: Some tables are wooden.",opts:["True","False","Cannot determine","Partially true"],ans:2},
+    {q:"Which figure completes the pattern: ○□○□○□__",opts:["□","○","△","None"],ans:0},
+    {q:"If today is Wednesday, what day is 100 days from now?",opts:["Monday","Tuesday","Friday","Saturday"],ans:0},
+    {q:"Odd one out: Pen, Pencil, Eraser, Chair",opts:["Pen","Pencil","Eraser","Chair"],ans:3},
+    {q:"If MANGO = 13+1+14+7+15 = 50, then APPLE = ?",opts:["50","51","52","53"],ans:0},
+    {q:"Direction: Starting north, turn right twice. You now face?",opts:["North","South","East","West"],ans:1},
+    {q:"Analogy: Doctor : Hospital :: Teacher : ?",opts:["Book","Student","School","Office"],ans:2},
+    {q:"Series: 1, 1, 2, 3, 5, 8, 13, __",opts:["18","19","20","21"],ans:3},
+    {q:"If A > B > C > D, who is second from bottom?",opts:["A","B","C","D"],ans:2},
+    {q:"Which is different: Square, Rectangle, Triangle, Sphere",opts:["Square","Rectangle","Triangle","Sphere"],ans:3},
+    {q:"Fact: All students study. Ram studies. Conclusion: Ram is a student.",opts:["True","False","Cannot determine","Partially true"],ans:0},
+    {q:"If 3+4=21 and 5+6=55, then 7+8=?",opts:["91","95","99","105"],ans:0},
+    {q:"How many times does the digit 3 appear from 1 to 30?",opts:["10","11","12","13"],ans:2},
+];
+
+const DomainQ = {
+    "Backend Developer":    [{q:"What does REST stand for?",opts:["Representational State Transfer","Remote State Transfer","None","Request State"],ans:0},{q:"What is an API?",opts:["A database","Interface for software communication","A framework","None"],ans:1},{q:"What does HTTP 404 mean?",opts:["Server error","Not found","Success","Redirect"],ans:1},{q:"What is a database?",opts:["A programming language","Organized collection of data","A web server","None"],ans:1},{q:"What is JSON?",opts:["A database","Data format using key-value pairs","A language","None"],ans:1},{q:"What is authentication?",opts:["Styling","Verifying user identity","Database operation","None"],ans:1},{q:"What is a GET request?",opts:["Sends data","Retrieves data","Deletes data","Updates data"],ans:1},{q:"What is ORM?",opts:["A language","Maps database tables to objects","A framework","None"],ans:1},{q:"What does CRUD stand for?",opts:["Create Read Update Delete","Code Run Update Deploy","None","Create Run Use Delete"],ans:0},{q:"What is middleware?",opts:["A database","Software between request and response","A language","None"],ans:1}],
+    "Frontend Developer":   [{q:"What does DOM stand for?",opts:["Document Object Model","Data Object Method","None","Document Order Model"],ans:0},{q:"What is responsive design?",opts:["Fast loading","Design adapting to screen sizes","Colorful design","None"],ans:1},{q:"What is CSS specificity?",opts:["Animation speed","How browser decides which CSS applies","Color intensity","None"],ans:1},{q:"What does async/await do?",opts:["Synchronous code","Handles promises cleanly","Creates loops","None"],ans:1},{q:"What is a framework?",opts:["A language","Pre-written code structure for development","A database","None"],ans:1},{q:"What is semantic HTML?",opts:["Colored HTML","Tags describing meaning","JS HTML","None"],ans:1},{q:"What is AJAX?",opts:["A language","Async web requests without page reload","A database","None"],ans:1},{q:"What is a CDN?",opts:["A database","Content Delivery Network","A language","None"],ans:1},{q:"What is accessibility in web?",opts:["Speed","Making websites usable for everyone including disabled","Design","None"],ans:1},{q:"What is Webpack?",opts:["A database","Module bundler for JavaScript","A language","None"],ans:1}],
+    "Data Scientist":       [{q:"What is a data pipeline?",opts:["A physical pipe","Series of data processing steps","A chart","None"],ans:1},{q:"What is EDA?",opts:["A language","Exploratory Data Analysis","A model","None"],ans:1},{q:"What is A/B testing?",opts:["Alphabetical test","Comparing two versions to see which performs better","A model","None"],ans:1},{q:"What is feature selection?",opts:["Selecting colors","Choosing most relevant input variables","None","Selecting models"],ans:1},{q:"What is the bias-variance tradeoff?",opts:["No relation","Balance between underfitting and overfitting","A model","None"],ans:1},{q:"What is NLP?",opts:["A network","Natural Language Processing","None","A database"],ans:1},{q:"What is a data warehouse?",opts:["Storage building","Large repository of structured data for analysis","A database","None"],ans:1},{q:"What is dimensionality reduction?",opts:["Making data bigger","Reducing number of features while preserving info","None","Adding features"],ans:1},{q:"What is a Jupyter Notebook?",opts:["A book","Interactive coding environment for data science","An IDE","None"],ans:1},{q:"What is time series data?",opts:["Random data","Data collected at regular time intervals","None","Static data"],ans:1}],
+    "Full Stack Developer":  [{q:"What is a full stack developer?",opts:["Frontend only","Backend only","Works on both frontend and backend","Database only"],ans:2},{q:"What is MVC?",opts:["A language","Model View Controller architecture","A database","None"],ans:1},{q:"What is version control?",opts:["Password manager","Tracking changes in code over time","A database","None"],ans:1},{q:"What is deployment?",opts:["Writing code","Making application available to users","Testing code","None"],ans:1},{q:"What is a microservice?",opts:["Small hardware","Small independent service in an application","A framework","None"],ans:1},{q:"What is Docker?",opts:["A language","Platform for containerizing applications","A database","None"],ans:1},{q:"What is CI/CD?",opts:["A language","Continuous Integration/Continuous Delivery","A database","None"],ans:1},{q:"What is cloud computing?",opts:["Local computing","Computing services over internet","A language","None"],ans:1},{q:"What is an API gateway?",opts:["A physical gate","Manages and routes API requests","A database","None"],ans:1},{q:"What is load balancing?",opts:["Weight lifting","Distributing traffic across servers","A language","None"],ans:1}],
+    "Data Analyst":         [{q:"What is KPI?",opts:["A language","Key Performance Indicator","A database","None"],ans:1},{q:"What is data wrangling?",opts:["Fighting with data","Cleaning and transforming raw data","A visualization","None"],ans:1},{q:"What is a bar chart used for?",opts:["Time trends","Comparing categories","Parts of whole","None"],ans:1},{q:"What is SQL used for in analytics?",opts:["Web design","Querying and extracting data","Running models","None"],ans:1},{q:"What is the purpose of data normalization?",opts:["Making data bigger","Scaling features to similar range","Deleting data","None"],ans:1},{q:"What is a dashboard in analytics?",opts:["A car dashboard","Visual display of key metrics","A database","None"],ans:1},{q:"What does 'data-driven decision' mean?",opts:["Guessing","Making decisions based on data analysis","Random choice","None"],ans:1},{q:"What is an outlier in data?",opts:["Average value","Data point far from others","Most common value","None"],ans:1},{q:"What is variance?",opts:["Average value","Measure of data spread from mean","Maximum value","None"],ans:1},{q:"What is data aggregation?",opts:["Deleting data","Computing summaries on grouped data","Sorting data","None"],ans:1}],
+    "Mobile App Developer": [{q:"What is a mobile app SDK?",opts:["A database","A toolkit for building apps on a platform","A design tool","None"],ans:1},{q:"What is cross-platform development?",opts:["Building for one OS only","Building apps that run on multiple platforms from one codebase","A database","None"],ans:1},{q:"What is an APK?",opts:["Android package file used to install apps","An iOS file","A web format","None"],ans:0},{q:"What does 'responsive UI' mean for mobile?",opts:["Fast servers","UI that adapts to different screen sizes","Only tablets","None"],ans:1},{q:"What is push notification used for?",opts:["Deleting data","Sending timely messages/alerts to users","Compiling code","None"],ans:1},{q:"What is app lifecycle?",opts:["A file type","The states an app goes through (created, paused, resumed, destroyed)","A UI component","None"],ans:1},{q:"What is local storage on mobile used for?",opts:["Running servers","Persisting small amounts of data on the device","Networking","None"],ans:1},{q:"What is an emulator used for?",opts:["Writing code","Testing an app on a simulated device","Publishing apps","None"],ans:1},{q:"What does 'native app' mean?",opts:["Runs in a browser","Built specifically for one platform using its native tools","A website","None"],ans:1},{q:"What is app store review important for?",opts:["No reason","Ensuring apps meet guidelines before publishing","Speed only","None"],ans:1}],
+    "Cloud Engineer":       [{q:"What does IaaS provide?",opts:["Only software","Virtualized computing infrastructure over the internet","Only storage","None"],ans:1},{q:"What is a container?",opts:["A physical server","A lightweight, portable unit that packages an app and its dependencies","A database","None"],ans:1},{q:"What is auto-scaling?",opts:["Manual upgrades","Automatically adjusting resources based on demand","Deleting servers","None"],ans:1},{q:"What is a VPC?",opts:["A virus","A Virtual Private Cloud — an isolated network in the cloud","A database","None"],ans:1},{q:"What does CI/CD stand for?",opts:["Continuous Integration/Continuous Delivery","Code Install/Code Deploy","None","Cloud Instance/Cloud Deploy"],ans:0},{q:"What is Infrastructure as Code?",opts:["Writing UI code","Managing infrastructure using configuration files/scripts","A database","None"],ans:1},{q:"What is a region in cloud computing?",opts:["A UI theme","A geographic location containing data centers","A file type","None"],ans:1},{q:"What is the purpose of monitoring/logging in cloud systems?",opts:["No purpose","Tracking system health and detecting issues","Styling apps","None"],ans:1},{q:"What is a Kubernetes cluster used for?",opts:["Writing code","Orchestrating and managing containerized applications","Storing files","None"],ans:1},{q:"What does 'serverless' computing mean?",opts:["No computers exist","Running code without managing the underlying servers","Only local computing","None"],ans:1}],
+    "Cybersecurity Analyst":[{q:"What is a vulnerability?",opts:["A strong password","A weakness that can be exploited by an attacker","An antivirus","A firewall rule"],ans:1},{q:"What is penetration testing?",opts:["Installing software","Simulating attacks to find security weaknesses","Writing reports only","Backing up data"],ans:1},{q:"What is SIEM used for?",opts:["Styling websites","Collecting and analyzing security event data","Writing code","None"],ans:1},{q:"What is the principle of least privilege?",opts:["Giving everyone admin access","Giving users only the access they need to do their job","No access control","None"],ans:1},{q:"What is an intrusion detection system (IDS)?",opts:["A firewall replacement","A system that monitors network traffic for suspicious activity","A backup tool","None"],ans:1},{q:"What is a zero-day vulnerability?",opts:["A well-known bug","A flaw unknown to the vendor with no patch yet available","A type of firewall","None"],ans:1},{q:"What is incident response?",opts:["Ignoring attacks","A structured process to handle and recover from security incidents","Writing marketing content","None"],ans:1},{q:"What is a security patch?",opts:["A new feature","An update that fixes a security vulnerability","A type of malware","None"],ans:1},{q:"What does 'CIA triad' stand for in security?",opts:["Confidentiality, Integrity, Availability","Central Intelligence Agency","Code, Input, Access","None"],ans:0},{q:"What is a security audit?",opts:["A sales report","A systematic evaluation of an organization's security posture","A marketing plan","None"],ans:1}],
+    "UI/UX Designer":       [{q:"What is the difference between UI and UX?",opts:["No difference","UI is visual design, UX is the overall user experience/flow","UX is only colors","UI is only backend"],ans:1},{q:"What is a user persona?",opts:["A real customer","A fictional representation of a target user based on research","A UI component","None"],ans:1},{q:"What is usability testing?",opts:["Testing server speed","Observing real users to find usability issues","Writing code tests","None"],ans:1},{q:"What is a wireframe?",opts:["A final design","A low-fidelity layout showing structure","A color scheme","None"],ans:1},{q:"What is user research used for?",opts:["No purpose","Understanding user needs and behaviors before designing","Only marketing","None"],ans:1},{q:"What is accessibility in design?",opts:["Fast loading","Designing so people with disabilities can use the product","Only mobile design","None"],ans:1},{q:"What is a design system?",opts:["A single icon","A reusable set of components and guidelines for consistency","A coding library","None"],ans:1},{q:"What is information architecture?",opts:["Server design","Organizing and structuring content for easy navigation","A database schema","None"],ans:1},{q:"What is an A/B test used for in UX?",opts:["Only for ads","Comparing two design versions to see which performs better","Writing code","None"],ans:1},{q:"What does 'user flow' represent?",opts:["Server traffic","The path a user takes through an app to complete a task","A file format","None"],ans:1}],
+};
+
+const defaultDomain = [
+    {q:"What is your understanding of your target career field?",opts:["Expert knowledge","Good understanding","Basic knowledge","Just exploring"],ans:0},
+    {q:"Have you done any projects related to your career goal?",opts:["Yes, multiple","Yes, one","Planning to","Not yet"],ans:0},
+    {q:"How familiar are you with industry tools in your field?",opts:["Very familiar","Somewhat familiar","Heard of them","Not aware"],ans:0},
+    {q:"What is the importance of continuous learning in tech careers?",opts:["Essential to stay relevant","Somewhat important","Not very important","Not important"],ans:0},
+    {q:"What is a professional portfolio?",opts:["A physical folder","Collection of your work showcasing your skills","A resume","None"],ans:1},
+    {q:"What is networking in career terms?",opts:["Computer networks","Building professional relationships","Social media","None"],ans:1},
+    {q:"What is a technical interview?",opts:["HR interview","Interview testing your technical knowledge and coding","Salary negotiation","None"],ans:1},
+    {q:"What does NSQF stand for?",opts:["National Skills Qualification Framework","No Skills Qualification","None","National Study Question Form"],ans:0},
+    {q:"What is an internship?",opts:["A full-time job","Short-term work experience in a company","A certification","None"],ans:1},
+    {q:"What is the importance of GitHub for developers?",opts:["Not important","Shows your code, projects and contributions to employers","Only for open source","None"],ans:1},
+];
+
+// FIX: profile.html now stores the chosen career goal directly under the key
+// "careerGoal" — this lookup matches it against DomainQ, falling back to a
+// partial/case-insensitive match, then to the generic bank only if nothing matches.
+function getDomainBank() {
+    const career  = localStorage.getItem("careerGoal") || "";
+    let bankKey = Object.keys(DomainQ).find(k => k.toLowerCase() === career.toLowerCase());
+    if (!bankKey) {
+        bankKey = Object.keys(DomainQ).find(k => career.toLowerCase().includes(k.toLowerCase().split(" ")[0]) || k.toLowerCase().includes(career.toLowerCase().split(" ")[0]||"~~"));
+    }
+    return { bank: bankKey ? DomainQ[bankKey] : defaultDomain, career };
+}
+
+// NEW: builds the combined "Mixed" section — 4 Aptitude + 3 Logical + 3 Domain
+// questions in one 10-question pool, each tagged with its type so scores can
+// be split back out (aptitude/logical/domain) after submission.
+function loadMixed() {
+    const { bank, career } = getDomainBank();
+    document.getElementById("mixed-desc").textContent =
+        `10 questions: 4 Aptitude + 3 Logical Reasoning + 3 Domain Knowledge (${career || "General Career Knowledge"}).`;
+
+    const aptPick = [...AptitudeQ].sort(()=>0.5-Math.random()).slice(0,4).map(q => ({...q, type:"aptitude"}));
+    const logPick = [...LogicalQ].sort(()=>0.5-Math.random()).slice(0,3).map(q => ({...q, type:"logical"}));
+    const domPick = [...bank].sort(()=>0.5-Math.random()).slice(0,3).map(q => ({...q, type:"domain"}));
+
+    mixQ = [...aptPick, ...logPick, ...domPick].sort(()=>0.5-Math.random());
+    renderQuestions(mixQ, "mixContainer", "mix", "mix-count", "mix-prog");
+}
+
+const sentences = [
+    "Technology is transforming the way we learn, work, and communicate with each other in the modern world.",
+    "Effective communication is the foundation of every successful personal and professional relationship.",
+    "Hard work, dedication, and continuous learning are the keys to achieving excellence in any field.",
+    "The ability to express your ideas clearly is one of the most powerful skills you can develop in life.",
+    "Success is not about being the smartest person — it is about being the most consistent.",
+    "Confidence in communication comes from preparation, practice, and willingness to improve.",
+    "Reading books regularly improves vocabulary, enhances focus, and broadens your understanding.",
+    "Every problem has a solution; the key is to approach it with patience and determination.",
+];
+const paragraphs = [
+    "Artificial Intelligence is no longer a concept of the future — it is a reality of today. From voice assistants to recommendation systems, AI is embedded in our daily lives. Students who learn AI fundamentals today will be the innovators of tomorrow.",
+    "Communication is one of the most essential skills in the modern workplace. Whether presenting an idea, writing an email, or speaking publicly, expressing yourself clearly and confidently makes a significant difference in your career.",
+    "The world of technology is evolving at an unprecedented pace. New programming languages and tools emerge every year, making it essential for developers and engineers to keep learning continuously to stay ahead.",
+    "India is home to one of the world's largest youth populations. With the right skills, education, and opportunities, Indian students have the potential to lead the global economy and drive innovation.",
+    "Teamwork is the ability to work together toward a common goal. In any workplace, those who collaborate effectively and communicate clearly are the ones who drive progress and achieve remarkable results.",
+];
+const topics = [
+    "How can technology help students learn better?",
+    "Why is communication important for a successful career?",
+    "What are the advantages of learning programming?",
+    "Describe a challenge you faced and how you overcame it.",
+    "What skills are most important to get a job today?",
+    "How has social media changed the way people communicate?",
+    "Why should students learn about artificial intelligence?",
+    "What is your dream career and how are you preparing for it?",
+    "How can students balance studies and personal development?",
+    "What is the importance of teamwork in a workplace?",
+    "How does reading books benefit a student's life?",
+    "Why is time management important for success?",
+    "What motivates you to keep learning new things every day?",
+    "How would you explain AI to a 10-year-old?",
+    "What makes a good leader in today's world?",
+];
+
+let si=0, pi=0, ti=0, mediaRec={}, analyserMap={}, animFrames={}, timerInt=null;
+
+function changeSent()  { si=(si+1)%sentences.length;  document.getElementById("sentText").textContent=`"${sentences[si]}"`; }
+function changePara()  { pi=(pi+1)%paragraphs.length; document.getElementById("paraText").textContent=paragraphs[pi]; }
+function changeTopic() { ti=(ti+1)%topics.length;     document.getElementById("topicText").textContent=`"${topics[ti]}"`; }
+
+function startVoiceMeter(stream, vmId, barsId, levelId) {
+    const ctx      = new (window.AudioContext||window.webkitAudioContext)();
+    const source   = ctx.createMediaStreamSource(stream);
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = 64;
+    source.connect(analyser);
+    analyserMap[vmId] = {analyser, ctx};
+    const bars   = document.getElementById(barsId).querySelectorAll(".vbar");
+    const levelEl= document.getElementById(levelId);
+    const data   = new Uint8Array(analyser.frequencyBinCount);
+    function draw() {
+        animFrames[vmId] = requestAnimationFrame(draw);
+        analyser.getByteFrequencyData(data);
+        const avg = data.reduce((a,b)=>a+b,0)/data.length;
+        const pct = Math.round((avg/255)*100);
+        levelEl.textContent = pct + "%";
+        // NEW: record this sample for automatic post-recording scoring
+        const taskKey = vmId==="vm1" ? "sent" : vmId==="vm2" ? "para" : "topic";
+        if (commMetrics[taskKey]) commMetrics[taskKey].samples.push(pct);
+        bars.forEach((bar,i) => {
+            const val = data[i % data.length]/255;
+            bar.style.height = Math.max(4, Math.round(val*44)) + "px";
+            bar.style.background = pct>60 ? "linear-gradient(to top,#10B981,#34D399)" : pct>25 ? "linear-gradient(to top,#7C3AED,#3B82F6)" : "linear-gradient(to top,#F97316,#FBBF24)";
+        });
+    }
+    draw();
+}
+
+function stopVoiceMeter(vmId) {
+    if (animFrames[vmId]) cancelAnimationFrame(animFrames[vmId]);
+    if (analyserMap[vmId]) { try{analyserMap[vmId].ctx.close();}catch(e){} delete analyserMap[vmId]; }
+}
+
+// Expected minimum speaking duration (seconds) per task — used only to scale
+// the automatic score, not shown to the user as a strict pass/fail cutoff.
+const expectedDuration = { sent:8, para:20, topic:60 };
+const barIdFor  = { sent:"sentBar",  para:"paraBar",  topic:"topicBar" };
+const valIdFor  = { sent:"sentVal",  para:"paraVal",  topic:"topicVal" };
+
+function toggleMic(type, btnId, vmId) {
+    const btn   = document.getElementById(btnId);
+    const meter = document.getElementById(vmId);
+    const barsId = vmId.replace("vm","vbars");
+    const levelId= "vlevel" + vmId.replace("vm","");
+    if (btn.classList.contains("mic-stop")) {
+        btn.className = "mic-btn mic-start";
+        btn.innerHTML = `<i class="fa-solid fa-microphone"></i> ${type==="topic"?"Start Speaking":"Start Recording"}`;
+        meter.classList.remove("active");
+        stopVoiceMeter(vmId);
+        if (type==="topic") stopTimer();
+        try{if(mediaRec[type]) mediaRec[type].stop();}catch(e){}
+
+        // NEW: automatically compute this task's score from how long the
+        // person spoke and how active their voice was — no self-rating.
+        const m = commMetrics[type];
+        m.duration = (Date.now() - m.startTime) / 1000;
+        m.avgLevel = m.samples.length ? Math.round(m.samples.reduce((a,b)=>a+b,0)/m.samples.length) : 0;
+        const durationScore = Math.min(100, Math.round((m.duration / expectedDuration[type]) * 100));
+        const autoScore = Math.round(durationScore*0.6 + m.avgLevel*0.4);
+        document.getElementById(barIdFor[type]).style.width = autoScore + "%";
+        document.getElementById(valIdFor[type]).textContent = autoScore + "%";
+    } else {
+        if (!navigator.mediaDevices) { alert("Microphone not supported. Use Chrome."); return; }
+        navigator.mediaDevices.getUserMedia({audio:true}).then(stream => {
+            btn.className = "mic-btn mic-stop";
+            btn.innerHTML = '<i class="fa-solid fa-stop"></i> Stop Recording';
+            meter.classList.add("active");
+            commMetrics[type].startTime = Date.now();
+            commMetrics[type].samples   = [];
+            startVoiceMeter(stream, vmId, barsId, levelId);
+            const mr = new MediaRecorder(stream);
+            mediaRec[type] = mr; mr.start();
+            mr.onstop = () => stream.getTracks().forEach(t=>t.stop());
+            if (type==="topic") startTimer();
+        }).catch(()=>alert("Cannot access microphone. Allow permission in browser settings."));
+    }
+}
+
+function startTimer() {
+    let secs=120;
+    document.getElementById("timerDisplay").style.display="block";
+    timerInt=setInterval(()=>{
+        secs--;
+        document.getElementById("timerCount").textContent=`${Math.floor(secs/60)}:${(secs%60).toString().padStart(2,"0")}`;
+        if(secs<=0){clearInterval(timerInt);toggleMic("topic","micTopic","vm3");}
+    },1000);
+}
+function stopTimer(){ clearInterval(timerInt); document.getElementById("timerDisplay").style.display="none"; }
+
+function submitCommunication() {
+    const err = document.getElementById("comm-err");
+    const missing = ["sent","para","topic"].filter(k => commMetrics[k].samples.length === 0);
+    if (missing.length) {
+        err.textContent = "Please record all 3 tasks (Sentence, Paragraph, Topic) before submitting.";
+        err.style.display = "block";
+        setTimeout(()=>err.style.display="none", 3000);
+        return;
+    }
+
+    // NEW: overall communication score is the average of the 3 automatically
+    // computed task scores (duration + voice activity) — never self-rated.
+    const scoreOf = (type) => {
+        const m = commMetrics[type];
+        const durationScore = Math.min(100, Math.round((m.duration / expectedDuration[type]) * 100));
+        return Math.round(durationScore*0.6 + m.avgLevel*0.4);
+    };
+    const ov = Math.round((scoreOf("sent") + scoreOf("para") + scoreOf("topic")) / 3);
+
+    sectionScores.communication = ov;
+    sectionDone.communication   = true;
+    document.getElementById("st-communication").textContent = ov + "% ✓";
+    document.getElementById("stab-communication").classList.add("done");
+
+    showFinalResults();
+}
+
+// Career recommendations are now generated from BOTH skill level AND the
+// learner's chosen career goal (read from localStorage), instead of only
+// the flat level-based list that was identical for every learner.
+const careerTracks = {
+    "Backend Developer":     { icon:"fa-server",       color:"#7C3AED" },
+    "Frontend Developer":    { icon:"fa-window-maximize", color:"#3B82F6" },
+    "Full Stack Developer":  { icon:"fa-layer-group",  color:"#10B981" },
+    "Data Analyst":          { icon:"fa-chart-bar",    color:"#F97316" },
+    "Data Scientist":        { icon:"fa-flask",        color:"#A78BFA" },
+    "AI / ML Engineer":      { icon:"fa-robot",        color:"#F59E0B" },
+    "Mobile App Developer":  { icon:"fa-mobile-screen",color:"#34D399" },
+    "Cloud Engineer":        { icon:"fa-cloud",        color:"#60A5FA" },
+    "Cybersecurity Analyst": { icon:"fa-shield-halved",color:"#F87171" },
+    "UI/UX Designer":        { icon:"fa-pen-ruler",    color:"#EC4899" },
+};
+
+function buildRecommendations(level, careerGoal) {
+    const generic = {
+        Beginner:     [{career:"Junior Web Developer",match:80,icon:"fa-flask",color:"#10B981"},{career:"Data Entry Analyst",match:72,icon:"fa-robot",color:"#3B82F6"},{career:"IT Support",match:65,icon:"fa-layer-group",color:"#A78BFA"},{career:"Junior Python Dev",match:60,icon:"fa-chart-bar",color:"#F97316"},{career:"QA Tester",match:55,icon:"fa-code",color:"#F59E0B"}],
+        Intermediate: [{career:"Full Stack Developer",match:85,icon:"fa-flask",color:"#10B981"},{career:"Data Analyst",match:80,icon:"fa-robot",color:"#3B82F6"},{career:"Backend Developer",match:75,icon:"fa-layer-group",color:"#A78BFA"},{career:"ML Engineer",match:70,icon:"fa-chart-bar",color:"#F97316"},{career:"Software Engineer",match:65,icon:"fa-code",color:"#F59E0B"}],
+        Advanced:     [{career:"Data Scientist",match:92,icon:"fa-flask",color:"#10B981"},{career:"AI/ML Engineer",match:88,icon:"fa-robot",color:"#3B82F6"},{career:"Full Stack Developer",match:82,icon:"fa-layer-group",color:"#A78BFA"},{career:"Software Architect",match:78,icon:"fa-chart-bar",color:"#F97316"},{career:"Cloud Engineer",match:72,icon:"fa-code",color:"#F59E0B"}],
+    };
+    let list = [...(generic[level] || generic.Beginner)];
+    if (careerGoal && careerTracks[careerGoal]) {
+        const already = list.some(r => r.career.toLowerCase() === careerGoal.toLowerCase());
+        if (!already) {
+            const boostMatch = level==="Advanced" ? 94 : level==="Intermediate" ? 87 : 82;
+            list.unshift({ career: careerGoal, match: boostMatch, icon: careerTracks[careerGoal].icon, color: careerTracks[careerGoal].color });
+            list = list.slice(0,5);
+        } else {
+            list = list.sort((a,b) => a.career.toLowerCase()===careerGoal.toLowerCase() ? -1 : b.career.toLowerCase()===careerGoal.toLowerCase() ? 1 : 0);
+        }
+    }
+    return list;
+}
+
+// NEW: advice is now driven by the learner's ACTUAL score in each category
+// (not just their overall level), so two people at "Intermediate" with very
+// different Logical/Domain scores get different guidance.
+const categoryAdvice = {
+    technical: {
+        weak:     (skills) => `Revisit the fundamentals of ${skills || "your chosen skills"} — go slowly through syntax and basic exercises before moving on.`,
+        moderate: (skills) => `Practice medium-level coding problems on LeetCode/HackerRank in ${skills || "your chosen skills"} and build 2–3 small projects.`,
+        strong:   (skills) => `Contribute to open-source projects and take on system-design style challenges in ${skills || "your stack"}.`,
+    },
+    aptitude: {
+        weak:     () => "Practice basic quantitative aptitude daily — percentages, ratios, time & work problems (e.g. R.S. Aggarwal).",
+        moderate: () => "Work through timed aptitude test sets to build speed and accuracy under pressure.",
+        strong:   () => "Attempt competitive-level quantitative reasoning sets to stay sharp.",
+    },
+    logical: {
+        weak:     () => "Start with basic pattern recognition and syllogism exercises — 15 minutes of daily practice improves this fast.",
+        moderate: () => "Practice puzzles, seating arrangements and logic-based coding problems to sharpen deduction speed.",
+        strong:   () => "Take on advanced analytical reasoning sets used in competitive exams.",
+    },
+    domain: {
+        weak:     (goal) => `Go through the fundamentals of ${goal || "your target field"} with a beginner-level course before anything advanced.`,
+        moderate: (goal) => `Deepen your domain knowledge in ${goal || "your target field"} with an intermediate certification and a real case study.`,
+        strong:   (goal) => `Pursue an advanced/specialized certification in ${goal || "your target field"} and track the latest tools used in it.`,
+    },
+    communication: {
+        weak:     () => "Practice reading aloud daily and record yourself to build clarity, pace and confidence.",
+        moderate: () => "Join a speaking practice group or do mock interviews to build fluency under pressure.",
+        strong:   () => "Focus on presentation and leadership communication — practice explaining complex ideas simply.",
+    },
+};
+
+function tierOf(score) { return score < 40 ? "weak" : score < 71 ? "moderate" : "strong"; }
+
+// Ranks all 5 categories weakest-first and returns a specific tip for each —
+// this is what actually varies per learner (unlike a single level-based list).
+function buildFocusAreas(scores, careerGoal, skillsText) {
+    const labels = { technical:"Technical", aptitude:"Aptitude", logical:"Logical Reasoning", domain:"Domain Knowledge", communication:"Communication" };
+    const context = { technical: skillsText, aptitude: null, logical: null, domain: careerGoal, communication: null };
+    return Object.keys(scores)
+        .map(key => ({ key, label: labels[key], score: scores[key], tier: tierOf(scores[key]) }))
+        .sort((a,b) => a.score - b.score)
+        .map(item => ({ ...item, advice: categoryAdvice[item.key][item.tier](context[item.key]) }));
+}
+
+function showFinalResults() {
+    const { technical, aptitude, logical, domain, communication } = sectionScores;
+    const overall = Math.round((technical + aptitude + logical + domain + communication) / 5);
+    const level   = overall<40 ? "Beginner" : overall<71 ? "Intermediate" : "Advanced";
+    const careerGoal = localStorage.getItem("careerGoal") || "";
+
+    localStorage.setItem("skillScore",     overall);
+    localStorage.setItem("skillLevel",     level);
+    localStorage.setItem("commScore",      communication);
+    localStorage.setItem("techScore",      technical);
+    localStorage.setItem("aptScore",       aptitude);
+    localStorage.setItem("logScore",       logical);
+    localStorage.setItem("domScore",       domain);
+    // NEW: persist the real per-skill breakdown so dashboard.html can show
+    // an accurate score per selected skill instead of the same default value.
+    localStorage.setItem("skillScores",    JSON.stringify(skillBreakdown));
+    localStorage.setItem("assessmentDone_" + currentUser.id, "true");
+
+    saveToBackend(technical, aptitude, logical, domain, communication, overall, level);
+
+    document.getElementById("finalResult").style.display = "block";
+    document.getElementById("final-score").textContent   = overall + "%";
+    const badge = document.getElementById("final-level");
+    badge.textContent = level + " Level";
+    badge.className   = "rlevel lv-" + level.toLowerCase();
+
+    const msgs = {
+        Beginner:     "Great start! We have built a personalized path to guide you from the basics.",
+        Intermediate: "Good work! Let's level up with advanced concepts and real projects.",
+        Advanced:     "Excellent! You are ready for real-world challenges and top certifications."
+    };
+    document.getElementById("final-msg").textContent = msgs[level];
+
+    const sections = { technical, aptitude, logical, domain, communication };
+    Object.entries(sections).forEach(([key,val]) => {
+        document.getElementById(`fs-${key}`).textContent  = val + "%";
+        document.getElementById(`fb-${key}`).style.width  = val + "%";
+    });
+
+    const skillsText = (JSON.parse(localStorage.getItem("profileSkills") || "[]")).join(", ");
+    const focusAreas = buildFocusAreas(sections, careerGoal, skillsText);
+
+    // NEW: each recommended career card now shows a tip pulled from the
+    // learner's own weakest categories (in order), instead of the same
+    // 4 static sentences every "Intermediate" learner used to see.
+    const recData = buildRecommendations(level, careerGoal);
+    document.getElementById("final-recs").innerHTML = recData.slice(0,4).map((r,i) =>
+        `<div class="rcard" onclick="flashBox(this)"><div class="rce"><i class="fa-solid ${r.icon}" style="color:${r.color};"></i></div><div class="rct">${r.career}</div><div class="rcd">${focusAreas[i % focusAreas.length].advice}</div></div>`).join("");
+
+    // NEW: full weakest-first breakdown so the learner sees exactly what to
+    // improve in each of the 5 categories, based on their real score in it.
+    const tierColor = { weak:"#F87171", moderate:"#FBBF24", strong:"#34D399" };
+    document.getElementById("focus-areas").innerHTML = focusAreas.map((f,i) => `
+        <div class="improve-box" onclick="flashBox(this)" style="animation-delay:${(0.02+i*0.06).toFixed(2)}s;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <span style="font-size:0.85rem;font-weight:600;">${f.label}</span>
+                <span style="font-size:0.75rem;font-weight:700;color:${tierColor[f.tier]};">${f.score}% — ${f.tier==="weak"?"Needs Work":f.tier==="moderate"?"Getting There":"Strong"}</span>
+            </div>
+            <div style="font-size:0.78rem;color:var(--muted);">${f.advice}</div>
+        </div>`).join("");
+
+    document.getElementById("finalResult").scrollIntoView({behavior:"smooth"});
+}
+
+async function saveToBackend(technical, aptitude, logical, domain, communication, overall, level) {
+    try {
+        await fetch(API_BASE + "/assessment", {
+            method:"POST", headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({
+                user_id: currentUser.id,
+                answers: { technical, aptitude, logical, domain, communication }
+            })
+        });
+    } catch(e) { console.log("Backend save skipped — working offline"); }
+}
+</script>
+</body>
+</html>
