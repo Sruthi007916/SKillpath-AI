@@ -27,7 +27,6 @@ The platform helps students and aspiring professionals identify suitable career 
 
 - HTML5
 - CSS3
-- Bootstrap 5
 - JavaScript
 
 ### Backend
